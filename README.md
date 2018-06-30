@@ -26,9 +26,9 @@ Sales項目一共包含三個業務對象，分別是
 * Record（銷售記錄）
 
 ### 視圖字段
-通過界面左側樹結點找到Employee對象的Fields，留意右側列表，它有一個字段的Source是view，即emamount。這代表emamount不屬於表字段，而是一個可通過邏輯計算出的視圖字段  
+通過界面左側樹結點找到Employee對象的Fields，留意右側列表，它有一個字段的Source是view，即emamount。這代表emamount不屬於表字段，而是一個可通過邏輯計算出其值的視圖字段  
 視圖字段可以用於對象的select/count等讀操作，但不可用於insert/update等寫操作  
-然而具體如何計算emamount，則需要程序員在建模後通過sql來實現
+然而具體如何計算emamount，則需要程序員在建模後通過sql來實現  
 同樣的，Product對象也有一個view字段，它是imamount
 
 ### 字段前綴
