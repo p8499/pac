@@ -1,0 +1,10 @@
+##   LinkedHashMap project
+##   Integer index
+#set($module=$project.modules[$index])
+package $project.envAndroid.packageView;
+
+import $project.envAndroid.packageBean.$module.androidBeanAlias;
+public interface $module.androidListViewAlias {
+    void on${module.androidBeanAlias}ListReloaded(List<${module.androidBeanAlias}> $module.androidBeanAlias.toLowerCase()List);
+    void on${module.androidBeanAlias}ListAppended(List<${module.androidBeanAlias}> $module.androidBeanAlias.toLowerCase()List);
+}

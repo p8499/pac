@@ -1,0 +1,9 @@
+##   LinkedHashMap project
+##   Integer index
+
+#set($module=$project.modules[$index])
+/**
+ * ID: ${module.id}
+ * Description: ${module.description}
+ */
+DROP VIEW $module.databaseView;

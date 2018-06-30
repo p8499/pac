@@ -1,0 +1,26 @@
+##   Class JsonPath
+##   LinkedHashMap project
+##   Integer index
+#set($projectContext=$JsonPath.parse($project))
+
+#set($module=$project.modules[$index])
+#set($datasource=$projectContext.read("$.envJtee.datasources[?(@.id=='$module.datasource')]")[0])
+#set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+/**
+ * ID: ${module.id}
+ * Description: ${module.description}
+ */
+#if($datasource.databaseType=="oracle")
+    ##oracle
+    ##sequences
+    #foreach($serialUnique in $projectContext.read("$.modules[$index].uniques[?(@.serial)]"))
+        DROP SEQUENCE ${module.databaseTable}_$serialUnique.items[0].toUpperCase();
+    #end
+    ##create table
+    DROP TABLE $module.databaseTable;
+#elseif($datasource.databaseType=="postgresql")
+    ##postgresql
+    SET CLIENT_ENCODING = UTF8;
+    ##create table
+    DROP TABLE $module.databaseTable;
+#end

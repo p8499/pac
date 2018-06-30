@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            stylesheets="@application.css" fx:controller="com.p8499.pacu.controller.ValueNewController">
+    <children>
+        <GridPane AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
+                  AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="50.0">
+            <columnConstraints>
+                <ColumnConstraints prefWidth="200" hgrow="NEVER"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+            <children>
+                <Label text="Value" styleClass="property-label" GridPane.rowIndex="0"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mValue" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Code" styleClass="property-label" GridPane.rowIndex="1"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mCode" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Label" styleClass="property-label" GridPane.rowIndex="2"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mLabel" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+            </children>
+        </GridPane>
+        <HBox spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+            <children>
+                <Button mnemonicParsing="true" text="_Save" onAction="#onSaveClick"/>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>

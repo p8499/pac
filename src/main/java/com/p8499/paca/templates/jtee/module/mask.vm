@@ -1,0 +1,96 @@
+## Context:
+##   Class StringUtils
+##   LinkedHashMap project
+##   Integer index
+#set($module=$project.modules[$index])
+package $project.envJtee.packageMask;
+
+import java.io.IOException;
+import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonSerializer;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+@JsonSerialize(using=${module.jteeMaskAlias}.Serializer.class)
+public class $module.jteeMaskAlias{
+    ## for each field
+    #foreach($field in $module.fields)
+        ## fields initial value
+        protected boolean $field.databaseColumn=false;
+        ## getter
+        public boolean get$StringUtils.capitalize($field.databaseColumn) () {
+            return $field.databaseColumn;
+        }
+        ## setter
+        public $module.jteeMaskAlias set$StringUtils.capitalize($field.databaseColumn) (boolean $field.databaseColumn) {
+            this.$field.databaseColumn=$field.databaseColumn;
+            return this;
+        }
+    #end
+
+    ## constructor
+    public $module.jteeMaskAlias (
+        #foreach($field in $module.fields)
+            boolean $field.databaseColumn
+            #if($velocityHasNext)
+                ,
+            #end
+        #end
+    ) {
+        #foreach($field in $module.fields)
+            this.$field.databaseColumn=$field.databaseColumn;
+        #end
+    }
+
+    ## constructor
+    public $module.jteeMaskAlias () {
+    }
+
+    ## all
+    public $module.jteeMaskAlias all(boolean b) {
+        #foreach($field in $module.fields)
+            this.$field.databaseColumn=b;
+        #end
+        return this;
+    }
+
+    ## getter by field name
+    public boolean get(String p) {
+        #foreach($field in $module.fields)
+            #if($velocityCount>1)
+                else
+            #end
+            if(p.equals("$field.databaseColumn"))
+                return $field.databaseColumn;
+        #end
+        return false;
+    }
+
+    ## setter by field name
+    public $module.jteeMaskAlias set(String p, boolean b) {
+        #foreach($field in $module.fields)
+            #if($velocityCount>1)
+                else
+            #end
+            if(p.equals("$field.databaseColumn"))
+                this.$field.databaseColumn=b;
+        #end
+        return this;
+    }
+
+    ## json serializer
+    public static class Serializer extends JsonSerializer<$module.jteeMaskAlias> {
+        @Override
+        public void serialize($module.jteeMaskAlias value,JsonGenerator gen,SerializerProvider serializers) throws IOException,JsonProcessingException {
+            gen.writeStartObject();
+            #foreach($field in $module.fields)
+                if(value.get$StringUtils.capitalize($field.databaseColumn)()) {
+                    gen.writeFieldName("$field.databaseColumn");
+                    gen.writeBoolean(value.get$StringUtils.capitalize($field.databaseColumn)());
+                }
+            #end
+            gen.writeEndObject();
+        }
+    }
+}

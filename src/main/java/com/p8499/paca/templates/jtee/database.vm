@@ -1,0 +1,15 @@
+## Context:
+##   LinkedHashMap project
+
+#foreach($datasource in $project.envJtee.datasources)
+#if($datasource.databaseType=="oracle")
+${datasource.id}.driverClassName=oracle.jdbc.OracleDriver
+#elseif($datasource.databaseType=="postgresql")
+${datasource.id}.driverClassName=org.postgresql.Driver
+#elseif($datasource.databaseType=="mysql")
+${datasource.id}.driverClassName=com.mysql.jdbc.Driver
+#end
+${datasource.id}.url=$datasource.url
+${datasource.id}.username=$datasource.username
+${datasource.id}.password=$datasource.password
+#end

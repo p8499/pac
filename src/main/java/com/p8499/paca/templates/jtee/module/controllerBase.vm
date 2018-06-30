@@ -1,0 +1,434 @@
+## Context:
+##   Class JsonPath
+##   Class StringUtils
+##   LinkedHashMap project
+##   Integer index
+#set($projectContext=$JsonPath.parse($project))
+
+#set($module=$project.modules[$index])
+package $project.envJtee.packageControllerBase;
+
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.URLConnection;
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.util.StreamUtils;
+import org.springframework.web.bind.annotation.*;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import ${project.envJtee.packageBase}.*;
+import ${project.envJtee.packageBean}.${module.jteeBeanAlias};
+import ${project.envJtee.packageMask}.${module.jteeMaskAlias};
+import ${project.envJtee.packageService}.${module.jteeServiceAlias};
+
+public abstract class $module.jteeControllerBaseAlias {
+    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+    protected static final String path = "$module.jteeControllerPath";
+    protected static final String attachmentPath = "$module.jteeControllerAttachmentPath";
+    #set($value="")
+    #foreach($keyItem in $keyUnique.items)
+        #if($velocityCount>1)
+            #set($value=$value+"/")
+        #end
+        #set($value=$value+"{$keyItem}")
+    #end
+    protected static final String pathKey = "$value";
+
+    ## get
+    @RequestMapping(
+        value = path + pathKey,
+        method = RequestMethod.GET,
+        produces = "application/json;charset=UTF-8"
+    )
+    public String get(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            @PathVariable $keyField.javaType $keyField.databaseColumn,
+        #end
+        @RequestParam(required = false) String mask
+    ) throws Exception {
+        $module.jteeMaskAlias maskObj = mask == null || mask.equals("") ? new ${module.jteeMaskAlias}().all(true) : jackson.readValue(mask, ${module.jteeMaskAlias}.class);
+        $module.jteeBeanAlias bean = onGet(
+            session,
+            request,
+            response,
+            #foreach($keyItem in $keyUnique.items)
+                $keyItem,
+            #end
+            maskObj
+        );
+        return jackson.writeValueAsString(bean);
+    }
+
+    ## onGet
+    protected abstract $module.jteeBeanAlias onGet(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn,
+        #end
+        $module.jteeMaskAlias mask
+    ) throws Exception;
+
+    ## add
+    @RequestMapping(
+        value = path
+            #if(!$keyUnique.serial)
+                +pathKey
+            #end
+            ,
+        method = RequestMethod.POST,
+        produces = "application/json;charset=UTF-8"
+    )
+    public String add(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        #if(!$keyUnique.serial)
+            #foreach($keyItem in $keyUnique.items)
+                #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+                @PathVariable $keyField.javaType $keyField.databaseColumn,
+            #end
+        #end
+        @RequestBody $module.jteeBeanAlias bean
+    ) throws Exception {
+        onAdd(
+            session,
+            request,
+            response,
+            #if(!$keyUnique.serial)
+                #foreach($keyItem in $keyUnique.items)
+                    $keyItem,
+                #end
+            #end
+            bean
+        );
+        return jackson.writeValueAsString(bean);
+    }
+
+    ## onAdd
+    protected abstract $module.jteeBeanAlias onAdd(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        #if(!$keyUnique.serial)
+            #foreach($keyItem in $keyUnique.items)
+                #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+                $keyField.javaType $keyField.databaseColumn,
+            #end
+        #end
+        $module.jteeBeanAlias bean
+    ) throws Exception;
+
+    ## update
+    @RequestMapping(
+        value = path + pathKey,
+        method = RequestMethod.PUT,
+        produces = "application/json;charset=UTF-8"
+    )
+    public String update(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            @PathVariable $keyField.javaType $keyField.databaseColumn,
+        #end
+        @RequestBody $module.jteeBeanAlias bean,
+        @RequestParam(required = false) String mask
+    ) throws Exception {
+        $module.jteeMaskAlias maskObj = mask == null || mask.equals("") ? new ${module.jteeMaskAlias}().all(true) : jackson.readValue(mask, ${module.jteeMaskAlias}.class);
+        onUpdate(
+            session,
+            request,
+            response,
+            #foreach($keyItem in $keyUnique.items)
+                $keyItem,
+            #end
+            bean,
+            maskObj
+        );
+        return jackson.writeValueAsString(bean);
+    }
+
+    ## onUpdate
+    protected abstract $module.jteeBeanAlias onUpdate(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn,
+        #end
+        $module.jteeBeanAlias bean,
+        $module.jteeMaskAlias mask
+    ) throws Exception;
+
+    ## delete
+    @RequestMapping(
+        value = path + pathKey,
+        method = RequestMethod.DELETE,
+        produces = "application/json;charset=UTF-8"
+    )
+    public void delete(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            ,@PathVariable $keyField.javaType $keyField.databaseColumn
+        #end
+    ) throws Exception {
+        onDelete(
+            session,
+            request,
+            response
+            #foreach($keyItem in $keyUnique.items)
+                ,$keyItem
+            #end
+        );
+    }
+
+    ## onDelete
+    protected abstract void onDelete(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            ,$keyField.javaType $keyField.databaseColumn
+        #end
+    ) throws Exception;
+
+    ## query
+    @RequestMapping(
+        value = path,
+        method = RequestMethod.GET,
+        produces = "application/json;charset=UTF-8"
+    )
+    public String query(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        @RequestParam(required = false) String filter,
+        @RequestParam(required = false) String orderBy,
+        @RequestHeader(required = false, name = "Range", defaultValue = "items=0-9") String range,
+        @RequestParam(required = false) String mask
+    ) throws Exception {
+        FilterExpr filterObj = filter == null || filter.equals("") ? null : jackson.readValue(filter, FilterExpr.class);
+        OrderByListExpr orderByListObj = orderBy == null || orderBy.equals("") ? null : OrderByListExpr.fromQuery(orderBy);
+        RangeExpr rangeObj = RangeExpr.fromQuery(range);
+        $module.jteeMaskAlias maskObj = mask == null || mask.equals("") ? new ${module.jteeMaskAlias}().all(true) : jackson.readValue(mask, ${module.jteeMaskAlias}.class);
+        Long total = onCount(session, request, response, filterObj);
+        if (total == null)
+            return null;
+        long start = rangeObj.getStart(total);
+        long count = rangeObj.getCount(total);
+        List<$module.jteeBeanAlias> results = onQuery(session, request, response, filterObj, orderByListObj, start, count, maskObj);
+        response.setHeader("Content-Range", RangeListExpr.getContentRange(start, results.size(), total));
+        return jackson.writeValueAsString(results);
+    }
+
+    ## onCount
+    protected abstract Long onCount(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterExpr filter
+    ) throws Exception;
+
+    ## onQuery
+    protected abstract List<$module.jteeBeanAlias> onQuery(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        FilterExpr filter,
+        OrderByListExpr orderByList,
+        long start,
+        long count,
+        $module.jteeMaskAlias mask
+    ) throws Exception;
+
+    ## downloadAttachment
+    @RequestMapping(
+        value = attachmentPath + pathKey,
+        method = RequestMethod.GET,
+        produces = "application/octet-stream"
+    )
+    public void downloadAttachment(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            @PathVariable $keyField.javaType $keyField.databaseColumn,
+        #end
+        @RequestParam(required = true) String name
+    ) throws Exception {
+        InputStream input = inputStream(
+            session,
+            request,
+            response,
+            #foreach($keyItem in $keyUnique.items)
+                $keyItem,
+            #end
+            name
+        );
+        if (input == null)
+            return;
+        String contentType = URLConnection.guessContentTypeFromName(name);
+        response.setContentType(contentType == null ? "application/octet-stream" : contentType);
+        response.setHeader("Content-Disposition", "attachment;fileName=" + name);
+        StreamUtils.copy(input, response.getOutputStream());
+        input.close();
+        response.getOutputStream().close();
+    }
+
+    ## inputStream
+    protected abstract InputStream inputStream(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn,
+        #end
+        String name
+    ) throws Exception;
+
+
+    ## uploadAttachment
+    @RequestMapping(
+        value = attachmentPath + pathKey,
+        method = RequestMethod.PUT,
+        produces = "application/json;charset=UTF-8"
+    )
+    public void uploadAttachment(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            @PathVariable $keyField.javaType $keyField.databaseColumn,
+        #end
+        @RequestParam(required = true) String name
+    ) throws Exception {
+        OutputStream output = outputStream(
+            session,
+            request,
+            response,
+            #foreach($keyItem in $keyUnique.items)
+                $keyItem,
+            #end
+            name
+        );
+        if (output == null)
+            return;
+        StreamUtils.copy(request.getInputStream(), output);
+        request.getInputStream().close();
+        output.close();
+    }
+
+    ## outputStream
+    protected abstract OutputStream outputStream(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn,
+        #end
+        String name
+    ) throws Exception;
+
+    ## deleteAttachment
+    @RequestMapping(
+        value = attachmentPath + pathKey,
+        method = RequestMethod.DELETE,
+        produces = "application/json;charset=UTF-8"
+    )
+    public void deleteAttachment(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            @PathVariable $keyField.javaType $keyField.databaseColumn,
+        #end
+        @RequestParam(required = true) String name
+    ) throws Exception {
+        onDeleteAttachment(
+            session,
+            request,
+            response,
+            #foreach($keyItem in $keyUnique.items)
+                $keyItem,
+            #end
+            name
+        );
+    }
+
+    ## onDeleteAttachment
+    protected abstract void onDeleteAttachment(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response,
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn,
+        #end
+        String name
+    ) throws Exception;
+
+    ## listAttachments
+    @RequestMapping(
+        value = attachmentPath + pathKey,
+        method = RequestMethod.GET,
+        produces = "application/json;charset=UTF-8"
+    )
+    public String listAttachments(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            ,@PathVariable $keyField.javaType $keyField.databaseColumn
+        #end
+    ) throws Exception {
+        List<String> result =onListAttachments(
+            session,
+            request,
+            response
+            #foreach($keyItem in $keyUnique.items)
+                ,$keyItem
+            #end
+        );
+        return jackson.writeValueAsString(result);
+    }
+
+    ## onListAttachments
+    protected abstract List<String> onListAttachments(
+        HttpSession session,
+        HttpServletRequest request,
+        HttpServletResponse response
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            ,$keyField.javaType $keyField.databaseColumn
+        #end
+    ) throws Exception;
+
+    @Value(value="#{jackson}")
+    protected ObjectMapper jackson;
+
+    @Value(value="#{$StringUtils.uncapitalize($module.jteeServiceAlias)}")
+    protected $module.jteeServiceAlias $StringUtils.uncapitalize($module.jteeServiceAlias);
+}

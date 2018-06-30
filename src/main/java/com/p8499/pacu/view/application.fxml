@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.input.KeyCodeCombination?>
+<BorderPane fx:id="mBorder" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.p8499.pacu.controller.ApplicationController">
+    <top>
+        <MenuBar>
+            <menus>
+                <Menu mnemonicParsing="false" text="Source">
+                    <items>
+                        <Menu mnemonicParsing="false" text="New">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Empty Project" onAction="#onEmptyClick">
+                                    <accelerator>
+                                        <KeyCodeCombination code="E"
+                                                            control="DOWN" alt="UP" meta="UP" shift="UP"
+                                                            shortcut="UP"/>
+                                    </accelerator>
+                                </MenuItem>
+                                <MenuItem mnemonicParsing="false" text="Sample Project" onAction="#onSampleClick">
+                                    <accelerator>
+                                        <KeyCodeCombination code="P"
+                                                            control="DOWN" alt="UP" meta="UP" shift="UP"
+                                                            shortcut="UP"/>
+                                    </accelerator>
+                                </MenuItem>
+                            </items>
+                        </Menu>
+                        <MenuItem mnemonicParsing="false" text="Open" onAction="#onOpenClick">
+                            <accelerator>
+                                <KeyCodeCombination code="O"
+                                                    control="DOWN" alt="UP" meta="UP" shift="UP" shortcut="UP"/>
+                            </accelerator>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false" text="Save" onAction="#onSaveClick">
+                            <accelerator>
+                                <KeyCodeCombination code="S"
+                                                    control="DOWN" alt="UP" meta="UP" shift="UP" shortcut="UP"/>
+                            </accelerator>
+                        </MenuItem>
+                        <MenuItem mnemonicParsing="false" text="Save As" onAction="#onSaveAsClick">
+                            <accelerator>
+                                <KeyCodeCombination code="S"
+                                                    control="DOWN" alt="DOWN" meta="UP" shift="UP" shortcut="UP"/>
+                            </accelerator>
+                        </MenuItem>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Project">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="Check">
+                            <accelerator>
+                                <KeyCodeCombination code="C"
+                                                    control="DOWN" alt="UP" meta="UP" shift="UP" shortcut="UP"/>
+                            </accelerator>
+                        </MenuItem>
+                        <Menu mnemonicParsing="false" text="Generate">
+                            <items>
+                                <MenuItem mnemonicParsing="false" text="Database Scripts" onAction="#onDatabaseClick">
+                                    <accelerator>
+                                        <KeyCodeCombination code="D"
+                                                            control="DOWN" alt="UP" meta="UP" shift="UP"
+                                                            shortcut="UP"/>
+                                    </accelerator>
+                                </MenuItem>
+                                <MenuItem mnemonicParsing="false" text="J2EE Project" onAction="#onJteeClick">
+                                    <accelerator>
+                                        <KeyCodeCombination code="J"
+                                                            control="DOWN" alt="UP" meta="UP" shift="UP"
+                                                            shortcut="UP"/>
+                                    </accelerator>
+                                </MenuItem>
+                                <MenuItem mnemonicParsing="false" text="Android Module" onAction="#onAndroidClick">
+                                    <accelerator>
+                                        <KeyCodeCombination code="N"
+                                                            control="DOWN" alt="UP" meta="UP" shift="UP"
+                                                            shortcut="UP"/>
+                                    </accelerator>
+                                </MenuItem>
+                            </items>
+                        </Menu>
+                    </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                    <items>
+                        <MenuItem mnemonicParsing="false" text="About">
+                            <accelerator>
+                                <KeyCodeCombination code="F1"
+                                                    control="UP" alt="UP" meta="UP" shift="UP" shortcut="UP"/>
+                            </accelerator>
+                        </MenuItem>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+    </top>
+    <left>
+        <TreeView fx:id="mTree" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0"
+                  AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0"/>
+    </left>
+    <center/>
+</BorderPane>

@@ -1,0 +1,29 @@
+##   Class JsonPath
+##   LinkedHashMap project
+##   Integer index
+#set($projectContext=$JsonPath.parse($project))
+
+#if($projectContext.read("$.modules[$index].fields[?(@.source=='view')]").size()>0)
+    #set($module=$project.modules[$index])
+    /**
+     * ID: ${module.id}
+     * Description: ${module.description}
+     */
+    CREATE VIEW
+        $module.databaseView
+    AS SELECT
+        #foreach($field in $module.fields)
+            #if($velocityCount>1)
+                ,
+            #end
+            /*$field.description*/
+            #if($field.source=='table')
+                t0.$field.databaseColumn AS $field.databaseColumn
+            #elseif($field.source=='view')
+                ? AS $field.databaseColumn
+            #end
+        #end
+    FROM
+        $module.databaseTable AS t0
+#end
+		

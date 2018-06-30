@@ -1,0 +1,25 @@
+## Context:
+##   Math
+##   String
+##   StringUtils
+##   LinkedHashMap project
+
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    #foreach($module in $project.modules)
+        #foreach($field in $module.fields)
+            #if($field.javaType=="Integer")
+                <integer name="$StringUtils.capitalize($module.id)_$StringUtils.capitalize($field.databaseColumn)_Length_Integer">$field.integerLength</integer>
+                #set($min=0-$Math.pow(10,$field.integerLength))
+                <integer name="$StringUtils.capitalize($module.id)_$StringUtils.capitalize($field.databaseColumn)_Min">$String.format("%.0f",$min)</integer>
+                #set($max=0+$Math.pow(10,$field.integerLength))
+                <integer name="$StringUtils.capitalize($module.id)_$StringUtils.capitalize($field.databaseColumn)_Max">$String.format("%.0f",$max)</integer>
+            #elseif($field.javaType=="Double")
+                <integer name="$StringUtils.capitalize($module.id)_$StringUtils.capitalize($field.databaseColumn)_Length_Integer">$field.integerLength</integer>
+                <integer name="$StringUtils.capitalize($module.id)_$StringUtils.capitalize($field.databaseColumn)_Length_Fraction">$field.fractionLength</integer>
+            #elseif($field.javaType=="String")
+                <integer name="$StringUtils.capitalize($module.id)_$StringUtils.capitalize($field.databaseColumn)_Length_String">$field.stringLength</integer>
+            #end
+        #end
+    #end
+</resources>

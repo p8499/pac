@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            stylesheets="@application.css" fx:controller="com.p8499.pacu.controller.FieldNewController">
+    <children>
+        <GridPane AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
+                  AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="50.0">
+            <columnConstraints>
+                <ColumnConstraints prefWidth="200" hgrow="NEVER"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+            <children>
+                <Label text="Source" styleClass="property-label" GridPane.rowIndex="0"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <ComboBox fx:id="mSource" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="table"/>
+                            <String fx:value="view"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                <Label text="Database Column" styleClass="property-label" GridPane.rowIndex="1"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mDatabaseColumn" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Description" styleClass="property-label" GridPane.rowIndex="2"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mDescription" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Not Null" styleClass="property-label" GridPane.rowIndex="3"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <CheckBox fx:id="mNotnull" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </CheckBox>
+                <Label text="Java Type" styleClass="property-label" GridPane.rowIndex="4"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <ComboBox fx:id="mJavaType" GridPane.rowIndex="4" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="Integer"/>
+                            <String fx:value="Double"/>
+                            <String fx:value="String"/>
+                            <String fx:value="java.util.Date"/>
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                <Label text="String Length" styleClass="property-label" GridPane.rowIndex="5"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mStringLength" GridPane.rowIndex="5" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Integer Length" styleClass="property-label" GridPane.rowIndex="6"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mIntegerLength" GridPane.rowIndex="6" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Fraction Length" styleClass="property-label" GridPane.rowIndex="7"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mFractionLength" GridPane.rowIndex="7" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Default Value" styleClass="property-label" GridPane.rowIndex="8"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mDefaultValue" GridPane.rowIndex="8" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+            </children>
+        </GridPane>
+        <HBox spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+            <children>
+                <Button mnemonicParsing="true" text="_Save" onAction="#onSaveClick"/>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>

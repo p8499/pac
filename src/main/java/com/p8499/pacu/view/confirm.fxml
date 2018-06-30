@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<AnchorPane prefHeight="120.0" prefWidth="240.0" stylesheets="@application.css"
+            xmlns="http://javafx.com/javafx/8.0.45" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.p8499.pacu.controller.ConfirmController">
+    <Label fx:id="mMessage" styleClass="message-label" wrapText="true"
+           AnchorPane.topAnchor="15.0" AnchorPane.leftAnchor="15.0" AnchorPane.rightAnchor="15.0"/>
+    <HBox spacing="5.0" AnchorPane.bottomAnchor="15.0" AnchorPane.rightAnchor="15.0">
+        <children>
+            <Button mnemonicParsing="true" prefWidth="80" text="_Okay" onAction="#onOkayClick"/>
+            <Button mnemonicParsing="true" prefWidth="80" text="_Cancel" onAction="#onCancelClick"/>
+        </children>
+    </HBox>
+</AnchorPane>

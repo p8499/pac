@@ -1,0 +1,9 @@
+##   LinkedHashMap project
+##   Integer index
+#set($module=$project.modules[$index])
+package $project.envAndroid.packageView;
+
+import $project.envAndroid.packageBean.$module.androidBeanAlias;
+public interface $module.androidViewAlias {
+    void on${module.androidBeanAlias}($module.androidBeanAlias $module.androidBeanAlias.toLowerCase());
+}

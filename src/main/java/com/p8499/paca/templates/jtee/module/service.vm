@@ -1,0 +1,145 @@
+## Context:
+##   Class JsonPath
+##   Class StringUtils
+##   LinkedHashMap project
+##   Integer index
+#set($projectContext=$JsonPath.parse($project))
+
+#set($module=$project.modules[$index])
+package $project.envJtee.packageService;
+
+import ${project.envJtee.packageBase}.FilterExpr;
+import ${project.envJtee.packageBase}.OrderByListExpr;
+import ${project.envJtee.packageMask}.${module.jteeMaskAlias};
+import ${project.envJtee.packageBean}.${module.jteeBeanAlias};
+import ${project.envJtee.packageMapper}.${module.datasource}.${module.jteeMapperAlias};
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Update;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
+import javax.validation.ConstraintViolation;
+import java.util.List;
+import java.util.Set;
+
+@Service("$StringUtils.uncapitalize($module.jteeServiceAlias)")
+public class $module.jteeServiceAlias {
+    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+    ## get
+    @Transactional(value="${module.datasource}_transaction",readOnly=true)
+    public $module.jteeBeanAlias get (
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn,
+        #end
+        $module.jteeMaskAlias mask
+    ) {
+        return ${StringUtils.uncapitalize($module.jteeMapperAlias)}.get (
+            #foreach($keyItem in $keyUnique.items)
+                $keyItem,
+            #end
+            mask
+        );
+    }
+
+    ## add
+    @Transactional(value="${module.datasource}_transaction")
+    public $module.jteeBeanAlias add($module.jteeBeanAlias bean) {
+        if (!validatorFactory.getValidator().validate(bean,Insert.class).isEmpty())
+        {   return null;
+        }
+        ${StringUtils.uncapitalize($module.jteeMapperAlias)}.add(bean);
+        return bean;
+    }
+
+    ## update
+    @Transactional(value="${module.datasource}_transaction")
+    public $module.jteeBeanAlias update($module.jteeBeanAlias bean, $module.jteeMaskAlias mask) {
+        Set<ConstraintViolation<$module.jteeBeanAlias>> violationSet= validatorFactory.getValidator().validate(bean, Update.class);
+        for (ConstraintViolation<$module.jteeBeanAlias> violation : violationSet)
+            if (mask.get(violation.getPropertyPath().toString()))
+                return null;
+        ${StringUtils.uncapitalize($module.jteeMapperAlias)}.update(bean, mask);
+        return bean;
+    }
+
+    ## delete
+    public boolean delete (
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            #if($velocityCount>1)
+                ,
+            #end
+            $keyField.javaType $keyField.databaseColumn
+        #end
+    ) {
+        return ${StringUtils.uncapitalize($module.jteeMapperAlias)}.delete(
+            #foreach($keyItem in $keyUnique.items)
+                #if($velocityCount>1)
+                    ,
+                #end
+                $keyItem
+            #end
+        );
+    }
+
+    ## delete where
+    @Transactional(value="${module.datasource}_transaction")
+    public void delete(FilterExpr filter) {
+        ${StringUtils.uncapitalize($module.jteeMapperAlias)}.deleteWhere(filter);
+    }
+
+    ## count
+    @Transactional(value="${module.datasource}_transaction",readOnly=true)
+    public long count(FilterExpr filter) {
+        return ${StringUtils.uncapitalize($module.jteeMapperAlias)}.count(filter);
+    }
+
+    ## query
+    @Transactional(value="${module.datasource}_transaction",readOnly=true)
+    public List<$module.jteeBeanAlias> query(FilterExpr filter,OrderByListExpr orderByList,long start,long count,$module.jteeMaskAlias mask) {
+        return ${StringUtils.uncapitalize($module.jteeMapperAlias)}.query(filter,orderByList,start,count,mask);
+    }
+
+    ## exists
+    @Transactional(value="${module.datasource}_transaction",readOnly=true)
+    public boolean exists (
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            #if($velocityCount>1)
+                ,
+            #end
+            $keyField.javaType $keyField.databaseColumn
+        #end
+    ) {
+        return ${StringUtils.uncapitalize($module.jteeMapperAlias)}.exists(
+            #foreach($keyItem in $keyUnique.items)
+                #if($velocityCount>1)
+                    ,
+                #end
+                $keyItem
+            #end
+        );
+    }
+
+    ## for each comparable field
+    #foreach($comparableField in $projectContext.read("$.modules[$index].fields[?(@.javaType in ['Integer','Double','java.util.Date'])]"))
+        ## min
+        @Transactional(value="${module.datasource}_transaction",readOnly=true)
+        public $comparableField.javaType min$StringUtils.capitalize($comparableField.databaseColumn)(FilterExpr filter,$comparableField.javaType defaultValue) {
+            return ${StringUtils.uncapitalize($module.jteeMapperAlias)}.min$StringUtils.capitalize($comparableField.databaseColumn)(filter,defaultValue);
+        }
+
+        ## max
+        @Transactional(value="${module.datasource}_transaction",readOnly=true)
+        public $comparableField.javaType max$StringUtils.capitalize($comparableField.databaseColumn)(FilterExpr filter,$comparableField.javaType defaultValue) {
+            return ${StringUtils.uncapitalize($module.jteeMapperAlias)}.max$StringUtils.capitalize($comparableField.databaseColumn)(filter,defaultValue);
+        }
+    #end
+
+    @Value(value="#{$StringUtils.uncapitalize($module.jteeMapperAlias)}")
+    protected $module.jteeMapperAlias $StringUtils.uncapitalize($module.jteeMapperAlias);
+    @Value(value="#{validatorFactory}")
+    protected LocalValidatorFactoryBean validatorFactory;
+}

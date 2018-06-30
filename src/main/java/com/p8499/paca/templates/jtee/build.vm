@@ -1,0 +1,30 @@
+## Context:
+##   Class JsonPath
+##   LinkedHashMap project
+#set($projectContext=$JsonPath.parse($project))
+apply plugin: 'war'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'javax.servlet:javax.servlet-api:3.1.0'
+    compile 'org.apache.logging.log4j:log4j-web:2.7'
+    compile 'commons-fileupload:commons-fileupload:1.3.2'
+    compile 'commons-httpclient:commons-httpclient:3.1'
+    compile 'org.apache.commons:commons-dbcp2:2.1.1'
+#if($projectContext.read("$.envJtee.datasources[?(@.databaseType=='postgresql')]").size()>0)
+    compile 'org.postgresql:postgresql:9.4.1209'
+#elseif($projectContext.read("$.envJtee.datasources[?(@.databaseType=='oracle')]").size()>0)
+    compile files('ojdbc6.jar')
+#elseif($projectContext.read("$.envJtee.datasources[?(@.databaseType=='mysql')]").size()>0)
+    compile 'mysql:mysql-connector-java:6.0.5'
+#end
+    compile 'org.mybatis:mybatis:3.4.1'
+    compile 'org.mybatis:mybatis-spring:1.3.0'
+    compile 'org.hibernate:hibernate-validator:5.2.4.Final'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.8.1'
+    compile 'org.springframework:spring-webmvc:4.3.2.RELEASE'
+    compile 'org.springframework:spring-jdbc:4.3.2.RELEASE'
+}

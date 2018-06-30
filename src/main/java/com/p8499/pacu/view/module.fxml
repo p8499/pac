@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            stylesheets="@application.css" fx:controller="com.p8499.pacu.controller.ModuleController">
+    <children>
+        <GridPane AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
+                  AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="50.0">
+            <columnConstraints>
+                <ColumnConstraints prefWidth="200" hgrow="NEVER"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+            <children>
+                <Label text="ID" styleClass="property-label" GridPane.rowIndex="0"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mId" GridPane.rowIndex="0" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Description" styleClass="property-label" GridPane.rowIndex="1"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mDescription" GridPane.rowIndex="1" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Comment" styleClass="property-label" GridPane.rowIndex="2"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextArea fx:id="mComment" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextArea>
+                <Label text="Datasource" styleClass="property-label" GridPane.rowIndex="3"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <ComboBox fx:id="mDatasource" GridPane.rowIndex="3" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </ComboBox>
+                <Label text="Database Table" styleClass="property-label" GridPane.rowIndex="4"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mDatabaseTable" GridPane.rowIndex="4" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Database View" styleClass="property-label" GridPane.rowIndex="5"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mDatabaseView" GridPane.rowIndex="5" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="J2EE Bean Alias" styleClass="property-label" GridPane.rowIndex="6"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mJteeBeanAlias" GridPane.rowIndex="6" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="J2EE Mask Alias" styleClass="property-label" GridPane.rowIndex="7"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mJteeMaskAlias" GridPane.rowIndex="7" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="J2EE Mapper Alias" styleClass="property-label" GridPane.rowIndex="8"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mJteeMapperAlias" GridPane.rowIndex="8" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="J2EE Service Alias" styleClass="property-label" GridPane.rowIndex="9"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mJteeServiceAlias" GridPane.rowIndex="9" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="J2EE Controller Base Alias" styleClass="property-label" GridPane.rowIndex="10"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mJteeControllerBaseAlias" GridPane.rowIndex="10" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="J2EE Controller Path" styleClass="property-label" GridPane.rowIndex="11"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mJteeControllerPath" GridPane.rowIndex="11" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="J2EE Controller Attachment Path" styleClass="property-label" GridPane.rowIndex="12"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mJteeControllerAttachmentPath" GridPane.rowIndex="12" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Android Bean Alias" styleClass="property-label" GridPane.rowIndex="13"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mAndroidBeanAlias" GridPane.rowIndex="13" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Android Mask Alias" styleClass="property-label" GridPane.rowIndex="14"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mAndroidMaskAlias" GridPane.rowIndex="14" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Android Stub Alias" styleClass="property-label" GridPane.rowIndex="15"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mAndroidStubAlias" GridPane.rowIndex="15" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Android View Alias" styleClass="property-label" GridPane.rowIndex="16"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mAndroidViewAlias" GridPane.rowIndex="16" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Android List View Alias" styleClass="property-label" GridPane.rowIndex="17"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mAndroidListViewAlias" GridPane.rowIndex="17" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+            </children>
+        </GridPane>
+        <HBox spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="10.0">
+            <children>
+                <Hyperlink text="Fields" onAction="#onFieldsClick"/>
+                <Hyperlink text="Uniques" onAction="#onUniquesClick"/>
+                <Hyperlink text="References" onAction="#onReferencesClick"/>
+            </children>
+        </HBox>
+        <HBox spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+            <children>
+                <Button mnemonicParsing="true" text="_Reset" onAction="#onResetClick"/>
+                <Button mnemonicParsing="true" text="_Save" onAction="#onSaveClick"/>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>

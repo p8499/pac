@@ -1,0 +1,187 @@
+##   Class StringUtils
+##   LinkedHashMap project
+##   Integer index
+#set($module=$project.modules[$index])
+package $project.envAndroid.packageBean;
+
+import android.os.Parcel;
+import android.os.Parcelable;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import ${project.envAndroid.packageBase}.DefaultDateFormatter;
+import $project.envAndroid.packageMask.$module.androidBeanAlias;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class $module.androidBeanAlias implements Parcelable {
+    public static final String TABLE="$module.databaseTable";
+    public static final String VIEW="$module.databaseView";
+    public static final String NAME="$module.id.toUpperCase()";
+
+    ## for each field
+    #foreach($field in $module.fields)
+        //region $field.databaseColumn $field.description
+        ## field labels
+        public static final String FIELD_$field.databaseColumn.toUpperCase()="$field.databaseColumn.toUpperCase()";
+        ## enum values
+        #if($field.values.size()>0)
+            #foreach($value in $field.values)
+                public static final $field.javaType $field.databaseColumn.toUpperCase()_$value.code=
+                #if($field.javaType=="Integer")
+                    $value.value
+                #elseif($field.javaType=="Double")
+                    $value.value
+                #elseif($field.javaType=="String")
+                    "$value.value"
+                #end
+                ;
+            #end
+        #end
+        ## default values
+        #if($field.defaultValue!='')
+            public static final $field.javaType DEFAULT_$field.databaseColumn.toUpperCase()=
+            #if($field.javaType=="Integer")
+                $field.defaultValue
+            #elseif($field.javaType=="Double")
+                $field.defaultValue
+            #elseif($field.javaType=="String")
+                "$field.defaultValue"
+            #end
+            ;
+        #end
+        ## fields initial value
+        #if($field.javaType=="java.util.Date")
+            #set($gmt=$Calendar.getInstance().getTimeZone().getRawOffset()/3600000)
+            @com.fasterxml.jackson.annotation.JsonFormat(timezone="GMT$String.format("%+d",$gmt)",pattern="yyyyMMddHHmmss")
+        #end
+        protected $field.javaType $field.databaseColumn=
+        #if($field.defaultValue!="")
+            DEFAULT_$field.databaseColumn.toUpperCase()
+        #else
+            null
+        #end
+        ;
+        ## constraints
+        #if($field.javaType=="Integer")
+            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
+            #set($min=0-$Math.pow(10,$field.integerLength))
+            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MIN=$String.format("%.0f",$min);
+            #set($max=0+$Math.pow(10,$field.integerLength))
+            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MAX=$String.format("%.0f",$max);
+        #elseif($field.javaType=="Double")
+            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
+            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_FRACTION=$field.fractionLength;
+        #elseif($field.javaType=="String")
+            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_STRING=$field.stringLength;
+        #end
+        ## getter
+        public $field.javaType get$StringUtils.capitalize($field.databaseColumn) () {
+            return $field.databaseColumn;
+        }
+        ## setter
+        public $module.androidBeanAlias set$StringUtils.capitalize($field.databaseColumn) ($field.javaType $field.databaseColumn) {
+            this.$field.databaseColumn=$field.databaseColumn;
+            return this;
+        }
+        //endregion
+
+    #end
+
+    ## constructor
+    public $module.androidBeanAlias (
+        #foreach($field in $module.fields)
+            $field.javaType $field.databaseColumn
+            #if($velocityHasNext)
+                ,
+            #end
+        #end
+    ){
+        #foreach($field in $module.fields)
+            if($field.databaseColumn!=null)
+                this.$field.databaseColumn=$field.databaseColumn;
+        #end
+    }
+
+    ## constructor
+    public $module.androidBeanAlias () {
+        this(
+            #foreach($field in $module.fields)
+                null
+                #if($velocityHasNext)
+                    ,
+                #end
+            #end
+        );
+    }
+
+    ## constructor (parcel)
+    public ${module.androidBeanAlias}(Parcel in)
+    {   #foreach($field in $module.fields)
+            #if($field.javaType=="Integer")
+                this.$field.databaseColumn=(Integer)in.readValue(Integer.class.getClassLoader());
+            #elseif($field.javaType=="Double")
+                this.$field.databaseColumn=(Double)in.readValue(Integer.class.getClassLoader());
+            #elseif($field.javaType=="String")
+                this.$field.databaseColumn=(String)in.readValue(Integer.class.getClassLoader());
+            #elseif($field.javaType=="java.util.Date")
+                this.$field.databaseColumn=DefaultDateFormatter.parse((String)in.readValue(Integer.class.getClassLoader()));
+            #end
+        #end
+    }
+
+    ## clone
+    public $module.androidBeanAlias clone() {
+        return new $module.androidBeanAlias (
+            #foreach($field in $module.fields)
+                $field.databaseColumn
+                #if($velocityHasNext)
+                    ,
+                #end
+            #end
+        );
+    }
+
+    ## equals
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof $module.androidBeanAlias)?equals(($module.androidBeanAlias)obj,new ${module.jteeMaskAlias}().all(true)):false;
+    }
+    public boolean equals($module.androidBeanAlias bean,$module.jteeMaskAlias mask)
+    {	if(mask==null)
+        mask=new ${module.jteeMaskAlias}().all(true);
+        #foreach($field in $module.fields)
+            if(mask.get$StringUtils.capitalize($field.databaseColumn)()&&!(get$StringUtils.capitalize($field.databaseColumn)()==null&&bean.get$StringUtils.capitalize($field.databaseColumn)()==null||get$StringUtils.capitalize($field.databaseColumn)()!=null&&bean.get$StringUtils.capitalize($field.databaseColumn)()!=null&&get$StringUtils.capitalize($field.databaseColumn)().equals(bean.get$StringUtils.capitalize($field.databaseColumn)())))
+                return false;
+        #end
+        return true;
+    }
+
+    ## parcelable
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+    @Override
+    public void writeToParcel(Parcel dest,int flags) {
+        #foreach($field in $module.fields)
+            #if($field.javaType=="Integer")
+                dest.writeValue($field.databaseColumn);
+            #elseif($field.javaType=="Double")
+                dest.writeValue($field.databaseColumn);
+            #elseif($field.javaType=="String")
+                dest.writeValue($field.databaseColumn);
+            #elseif($field.javaType=="java.util.Date")
+                dest.writeValue(DefaultDateFormatter.format($field.databaseColumn));
+            #end
+        #end
+    }
+
+    public static final ${module.androidBeanAlias}.Creator<$module.androidBeanAlias> CREATOR=new Creator<$module.androidBeanAlias>() {
+        @Override
+        public ${module.androidBeanAlias}[] newArray(int size) {
+            return new ${module.androidBeanAlias}[size];
+        }
+        @Override
+        public $module.androidBeanAlias createFromParcel(Parcel in) {
+            return new ${module.androidBeanAlias}(in);
+        }
+    };
+}

@@ -1,0 +1,30 @@
+## Context:
+##   LinkedHashMap project
+
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration status="error">
+    <appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <ThresholdFilter level="trace" onMatch="ACCEPT" onMismatch="DENY"/>
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        </Console>
+        #set($web="$"+"{"+"web:rootDir"+"}")
+        #set($date="$"+"{"+"date:yyyy-MM"+"}")
+        <RollingFile name="RollingFile" fileName="$web/WEB-INF/logs/app.log" filePattern="$web/WEB-INF/logs/$date/app-%d{MM-dd-yyyy}-%i.log.gz">
+        <PatternLayout pattern="%d{yyyy.MM.dd 'at' HH:mm:ss z} %-5level %class{36} %L %M - %msg%xEx%n"/>
+        <SizeBasedTriggeringPolicy size="500 MB"/>
+        </RollingFile>
+    </appenders>
+    <loggers>
+        <root level="trace">
+            <appender-ref ref="RollingFile"/>
+            <appender-ref ref="Console"/>
+        </root>
+        #foreach($datasource in $project.envJtee.datasources)
+            <logger name="$project.envJtee.packageMapper.$datasource.id" level="TRACE" additivity="false">
+                <appender-ref ref="RollingFile"/>
+                <appender-ref ref="Console"/>
+            </logger>
+        #end
+    </loggers>
+</configuration>

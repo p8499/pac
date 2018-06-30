@@ -1,0 +1,386 @@
+##   Class JsonPath
+##   Class StringUtils
+##   LinkedHashMap project
+##   Integer index
+#set($projectContext=$JsonPath.parse($project))
+
+#set($module=$project.modules[$index])
+package $project.envAndroid.packageStub;
+
+import android.content.Context;
+import java.util.List;
+import io.reactivex.Flowable;
+import io.reactivex.schedulers.Schedulers;
+import okhttp3.MediaType;
+import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
+import retrofit2.Response;
+import retrofit2.http.Body;
+import retrofit2.http.DELETE;
+import retrofit2.http.GET;
+import retrofit2.http.Header;
+import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
+import retrofit2.http.Query;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import ${project.envAndroid.packageBase}.FilterLogicExpr;
+import ${project.envAndroid.packageBase}.OrderByListExpr;
+import ${project.envAndroid.packageBase}.RangeExpr;
+import ${project.envAndroid.packageBase}.RetrofitFactory;
+import $project.envAndroid.packageBean.$module.androidBeanAlias;
+import $project.envAndroid.packageMask.$module.androidMaskAlias;
+
+public class $module.androidStubAlias {
+    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+    ## path
+    public static final String path = "$module.jteeControllerPath";
+    public static final String attachPath = "${module.jteeControllerAttachmentPath}";
+    #set($pathKey="")
+    #foreach($keyItem in $keyUnique.items)
+        #if($velocityCount>1)
+            #set($pathKey=$pathKey+"/")
+        #end
+        #set($pathKey="{"+$keyItem+"}")
+    #end
+    public static final String pathKey = "$pathKey";
+
+    ## single instance
+    private static $module.androidStubAlias service;
+    public static $module.androidStubAlias getInstance(Context context) {
+        if(service==null) {
+            service=new ${module.androidStubAlias}(context);
+        }
+        return service;
+    }
+
+    ## api
+    private Api api;
+    public ${module.androidStubAlias}(Context context) {
+        api=RetrofitFactory.getInstance(context).create(Api.class);
+    }
+
+    ## get
+    public Flowable<Response<$module.androidBeanAlias>> get (
+        #foreach($keyItem in $keyUnique.items)
+            #if($velocityCount>1)
+                ,
+            #end
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn
+        #end
+    ) {
+        return get(
+            #foreach($keyItem in $keyUnique.items)
+                $keyItem,
+            #end
+            null
+        );
+    }
+
+    ## get with mask
+    public Flowable<Response<$module.androidBeanAlias>> get(
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn,
+        #end
+        $module.androidMaskAlias mask
+    ) {
+        Flowable<Response<$module.androidBeanAlias>> flowable=null;
+        try {
+            flowable=api.get(
+                #foreach($keyItem in $keyUnique.items)
+                    $keyItem,
+                #end
+                mask==null?null:RetrofitFactory.getObjectMapper().writeValueAsString(mask)
+            ).subscribeOn(Schedulers.io());
+        }
+        catch(JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return flowable;
+    }
+
+    ## add
+    public Flowable<Response<$module.androidBeanAlias>> add($module.androidBeanAlias bean) {
+        Flowable<Response<$module.androidBeanAlias>> flowable=api.add(
+            #if(!$keyUnique.serial)
+                #foreach($keyItem in $keyUnique.items)
+                    bean.get$StringUtils.capitalize($keyItem)(),
+                #end
+            #end
+            bean
+        ).subscribeOn(Schedulers.io());
+        return flowable;
+    }
+
+    ## update
+    public Flowable<Response<$module.androidBeanAlias>> update($module.androidBeanAlias bean) {
+        return update(bean,null);
+    }
+
+    ## update with mask
+    public Flowable<Response<$module.androidBeanAlias>> update($module.androidBeanAlias bean,$module.androidMaskAlias mask) {
+        Flowable<Response<$module.androidBeanAlias>> flowable=null;
+        try {
+            flowable=api.update(
+                #foreach($keyItem in $keyUnique.items)
+                    bean.get$StringUtils.capitalize($keyItem)(),
+                #end
+                bean,mask==null?null:RetrofitFactory.getObjectMapper().writeValueAsString(mask)
+            ).subscribeOn(Schedulers.io());
+        }
+        catch(JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return flowable;
+    }
+
+    ## count
+    public Flowable<Response<Void>> count(FilterLogicExpr filter) {
+        Flowable<Response<Void>> flowable=null;
+        try {
+            flowable=api.count(
+                filter==null?null:RetrofitFactory.getObjectMapper().writeValueAsString(filter),
+                new RangeExpr("items",0L,-1L).toString(),
+                RetrofitFactory.getObjectMapper().writeValueAsString(
+                    new ${module.androidMaskAlias}()
+                    #foreach($keyItem in $keyUnique.items)
+                        .set$StringUtils.capitalize($keyItem)(true)
+                    #end
+                )
+            ).subscribeOn(Schedulers.io());
+        }
+        catch(JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return flowable;
+    }
+
+    ## query with range
+    public Flowable<Response<List<$module.androidBeanAlias>>> query(FilterLogicExpr filter,RangeExpr range) {
+        return query(filter,null,range,null);
+    }
+
+    ## query with range, orderby
+    public Flowable<Response<List<$module.androidBeanAlias>>> query(FilterLogicExpr filter,OrderByListExpr orderBy,RangeExpr range) {
+        return query(filter,orderBy,range,null);
+    }
+
+    ## query with range, mask
+    public Flowable<Response<List<$module.androidBeanAlias>>> query(FilterLogicExpr filter,RangeExpr range,$module.androidMaskAlias mask) {
+        return query(filter,null,range,mask);
+    }
+
+    ## query with range, orderby, mask
+    public Flowable<Response<List<$module.androidBeanAlias>>> query(FilterLogicExpr filter,OrderByListExpr orderBy,RangeExpr range,$module.androidMaskAlias mask) {
+        Flowable<Response<List<$module.androidBeanAlias>>> flowable=null;
+        try {
+            flowable=api.query(
+                filter==null?null:RetrofitFactory.getObjectMapper().writeValueAsString(filter),
+                orderBy==null?null:orderBy.toQuery(),
+                range==null?null:range.toString(),mask==null?null:RetrofitFactory.getObjectMapper().writeValueAsString(mask)
+            ).subscribeOn(Schedulers.io());
+        }
+        catch(JsonProcessingException e) {
+            e.printStackTrace();
+        }
+        return flowable;
+    }
+
+    ## delete
+    public Flowable<Response<Void>> delete (
+        #foreach($keyItem in $keyUnique.items)
+            #if($velocityCount>1)
+                ,
+            #end
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn
+        #end
+    ) {
+        return api.delete(
+            #foreach($keyItem in $keyUnique.items)
+                #if($velocityCount>1)
+                    ,
+                #end
+                $keyItem
+            #end
+        ).subscribeOn(Schedulers.io());
+    }
+
+    ## downloadAttachment
+    public Flowable<Response<ResponseBody>> downloadAttachment (
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn,
+        #end
+        String name
+    ) {
+        Flowable<Response<ResponseBody>> flowable=api.downloadAttachment(
+            #foreach($keyItem in $keyUnique.items)
+                $keyItem,
+            #end
+            name,"application/octet-stream"
+        ).subscribeOn(Schedulers.io());
+        return flowable;
+    }
+
+    ## uploadAttachment
+    public Flowable<Response<Void>> uploadAttachment (
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn,
+        #end
+        String name,byte[] bytes
+    ) {
+        RequestBody body=RequestBody.create(MediaType.parse("multipart/form-data"),bytes);
+        Flowable<Response<Void>> flowable=api.uploadAttachment(
+            #foreach($keyItem in $keyUnique.items)
+                $keyItem,
+            #end
+            name,body
+        ).subscribeOn(Schedulers.io());
+        return flowable;
+    }
+
+    ## deleteAttachment
+    public Flowable<Response<Void>> deleteAttachment (
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn,
+        #end
+        String name
+    ) {
+        Flowable<Response<Void>> flowable=api.deleteAttachment(
+            #foreach($keyItem in $keyUnique.items)
+                $keyItem,
+            #end
+            name
+        ).subscribeOn(Schedulers.io());
+        return flowable;
+    }
+
+    ## listAttachments
+    public Flowable<Response<List<String>>> listAttachments (
+        #foreach($keyItem in $keyUnique.items)
+            #if($velocityCount>1)
+                ,
+            #end
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            $keyField.javaType $keyField.databaseColumn
+        #end
+    ) {
+        Flowable<Response<List<String>>> flowable=api.listAttachments(
+            #foreach($keyItem in $keyUnique.items)
+                #if($velocityCount>1)
+                    ,
+                #end
+                $keyItem
+            #end
+        ).subscribeOn(Schedulers.io());
+        return flowable;
+    }
+
+    public interface Api {
+        @GET(path+pathKey)
+        Flowable<Response<$module.androidBeanAlias>> get (
+            #foreach($keyItem in $keyUnique.items)
+                #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+                @Path("$keyField.databaseColumn") $keyField.javaType $keyField.databaseColumn,
+            #end
+            @Query("mask") String mask
+        );
+
+        @POST(
+            path
+            #if(!$keyUnique.serial)
+                +pathKey
+            #end
+        )
+        Flowable<Response<$module.androidBeanAlias>> add (
+            #if(!$keyUnique.serial)
+                #foreach($keyItem in $keyUnique.items)
+                    #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+                    @Path("$keyField.databaseColumn") $keyField.javaType $keyField.databaseColumn,
+                #end
+            #end
+            @Body $module.androidBeanAlias bean
+        );
+
+        @PUT(path+pathKey)
+        Flowable<Response<$module.androidBeanAlias>> update (
+            #foreach($keyItem in $keyUnique.items)
+                #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+                @Path("$keyField.databaseColumn") $keyField.javaType $keyField.databaseColumn,
+            #end
+            @Body $module.androidBeanAlias bean,
+            @Query("mask") String mask
+        );
+
+        @DELETE(path+pathKey)
+        Flowable<Response<Void>> delete (
+            #foreach($keyItem in $keyUnique.items)
+                #if($velocityCount>1)
+                    ,
+                #end
+                #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+                @Path("$keyField.databaseColumn") $keyField.javaType $keyField.databaseColumn
+            #end
+        );
+
+        @GET(path)
+        Flowable<Response<List<$module.androidBeanAlias>>> query (
+            @Query("filter") String filter,
+            @Query("orderBy") String orderBy,
+            @Header("Range") String range,
+            @Query("mask") String mask
+        );
+
+        @GET(path)
+        Flowable<Response<Void>> count (
+            @Query("filter") String filter,
+            @Header("Range") String range,
+            @Query("mask") String mask
+        );
+
+        @GET(attachPath+pathKey)
+        Flowable<Response<ResponseBody>> downloadAttachment (
+            #foreach($keyItem in $keyUnique.items)
+                #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+                $keyField.javaType $keyField.databaseColumn,
+            #end
+            @Query("name") String name,
+            @Header("Accept") String accept
+        );
+
+        @PUT(attachPath+pathKey)
+        Flowable<Response<Void>> uploadAttachment (
+            #foreach($keyItem in $keyUnique.items)
+                #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+                $keyField.javaType $keyField.databaseColumn,
+            #end
+            @Query("name") String name,
+            @Body RequestBody body
+        );
+
+        @DELETE(attachPath+pathKey)
+        Flowable<Response<Void>> deleteAttachment (
+            #foreach($keyItem in $keyUnique.items)
+                #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+                $keyField.javaType $keyField.databaseColumn,
+            #end
+            @Query("name") String name
+        );
+
+        @GET(attachPath+pathKey)
+        Flowable<Response<List<String>>> listAttachments(
+            #foreach($keyItem in $keyUnique.items)
+                #if($velocityCount>1)
+                    ,
+                #end
+                #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+                @Path("$keyField.databaseColumn") $keyField.javaType $keyField.databaseColumn
+            #end
+        );
+    }
+}

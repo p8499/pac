@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<AnchorPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1"
+            stylesheets="@application.css" fx:controller="com.p8499.pacu.controller.ReferenceController">
+    <children>
+        <GridPane AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="5.0"
+                  AnchorPane.topAnchor="5.0" AnchorPane.bottomAnchor="50.0">
+            <columnConstraints>
+                <ColumnConstraints prefWidth="200" hgrow="NEVER"/>
+                <ColumnConstraints hgrow="ALWAYS"/>
+            </columnConstraints>
+            <children>
+                <Label text="Abbreviation" styleClass="property-label" GridPane.rowIndex="0"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <TextField fx:id="mAbbreviation" GridPane.rowIndex="0" GridPane.columnIndex="1" disable="true">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </TextField>
+                <Label text="Domestics" styleClass="property-label" GridPane.rowIndex="1"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <HBox GridPane.rowIndex="1" GridPane.columnIndex="1" spacing="5.0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                    <ListView fx:id="mDomesticCandidates" HBox.hgrow="ALWAYS"/>
+                    <VBox HBox.hgrow="NEVER" alignment="CENTER" spacing="5.0">
+                        <HBox.margin>
+                            <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                        </HBox.margin>
+                        <Button mnemonicParsing="true" text="&lt;" onAction="#onDomesticDeselectClick"/>
+                        <Button mnemonicParsing="true" text="&gt;" onAction="#onDomesticSelectClick"/>
+                    </VBox>
+                    <ListView fx:id="mDomestics" HBox.hgrow="ALWAYS"/>
+                </HBox>
+                <Label text="Foreign Module" styleClass="property-label" GridPane.rowIndex="2"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <ComboBox fx:id="mForeignModule" GridPane.rowIndex="2" GridPane.columnIndex="1">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </ComboBox>
+                <Label text="Foreigns" styleClass="property-label" GridPane.rowIndex="3"
+                       GridPane.columnIndex="0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                </Label>
+                <HBox GridPane.rowIndex="3" GridPane.columnIndex="1" spacing="5.0">
+                    <GridPane.margin>
+                        <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                    </GridPane.margin>
+                    <ListView fx:id="mForeignCandidates" HBox.hgrow="ALWAYS"/>
+                    <VBox HBox.hgrow="NEVER" alignment="CENTER" spacing="5.0">
+                        <HBox.margin>
+                            <Insets top="5.0" left="5.0" right="5.0" bottom="5.0"/>
+                        </HBox.margin>
+                        <Button mnemonicParsing="true" text="&lt;" onAction="#onForeignDeselectClick"/>
+                        <Button mnemonicParsing="true" text="&gt;" onAction="#onForeignSelectClick"/>
+                    </VBox>
+                    <ListView fx:id="mForeigns" HBox.hgrow="ALWAYS"/>
+                </HBox>
+            </children>
+        </GridPane>
+        <HBox spacing="5.0" AnchorPane.bottomAnchor="10.0" AnchorPane.rightAnchor="10.0">
+            <children>
+                <Button mnemonicParsing="true" text="_Reset" onAction="#onResetClick"/>
+                <Button mnemonicParsing="true" text="_Save" onAction="#onSaveClick"/>
+            </children>
+        </HBox>
+    </children>
+</AnchorPane>

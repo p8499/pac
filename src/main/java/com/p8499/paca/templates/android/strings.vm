@@ -1,0 +1,7 @@
+## Context:
+##   LinkedHashMap project
+
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <string name="app_name">$project.envAndroid.app</string>
+</resources>

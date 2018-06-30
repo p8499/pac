@@ -1,0 +1,162 @@
+## Context:
+##   Class Integer
+##   Class String
+##   Class Math
+##   Class Calendar
+##   Class JsonPath
+##   Class StringUtils
+##   LinkedHashMap project
+##   Integer index
+#set($projectContext=$JsonPath.parse($project))
+
+#set($module=$project.modules[$index])
+package $project.envJtee.packageBean;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Update;
+
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class $module.jteeBeanAlias {
+    public static final String TABLE="$module.databaseTable";
+    public static final String VIEW="$module.databaseView";
+    public static final String NAME="$module.id.toUpperCase()";
+
+    ## for each field
+    #foreach($field in $module.fields)
+        //region $field.databaseColumn $field.description
+        ## field labels
+        public static final String FIELD_$field.databaseColumn.toUpperCase()="$field.databaseColumn.toUpperCase()";
+        ## enum values
+        #if($field.values.size()>0)
+            #foreach($value in $field.values)
+                public static final $field.javaType $field.databaseColumn.toUpperCase()_$value.code=
+                #if($field.javaType=="Integer")
+                    $value.value
+                #elseif($field.javaType=="Double")
+                    $value.value
+                #elseif($field.javaType=="String")
+                    "$value.value"
+                #end
+                ;
+            #end
+        #end
+        ## default values
+        #if($field.defaultValue!='')
+            public static final $field.javaType DEFAULT_$field.databaseColumn.toUpperCase()=
+            #if($field.javaType=="Integer")
+                $field.defaultValue
+            #elseif($field.javaType=="Double")
+                $field.defaultValue
+            #elseif($field.javaType=="String")
+                "$field.defaultValue"
+            #end
+            ;
+        #end
+        ## fields initial value
+        #if($field.javaType=="java.util.Date")
+            #set($gmt=$Calendar.getInstance().getTimeZone().getRawOffset()/3600000)
+            @com.fasterxml.jackson.annotation.JsonFormat(timezone="GMT$String.format("%+d",$gmt)",pattern="yyyyMMddHHmmss")
+        #end
+        protected $field.javaType $field.databaseColumn=
+        #if($field.defaultValue!="")
+            DEFAULT_$field.databaseColumn.toUpperCase()
+        #else
+            null
+        #end
+        ;
+        ## constraints
+        #if($field.javaType=="Integer")
+            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
+            #set($min=0-$Math.pow(10,$field.integerLength))
+            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MIN=$String.format("%.0f",$min);
+            #set($max=0+$Math.pow(10,$field.integerLength))
+            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MAX=$String.format("%.0f",$max);
+        #elseif($field.javaType=="Double")
+            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
+            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_FRACTION=$field.fractionLength;
+        #elseif($field.javaType=="String")
+            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_STRING=$field.stringLength;
+        #end
+        ## nullable annotation of getter
+        #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+        #if($keyUnique.serial&&$keyUnique.items[0]==$field.databaseColumn)
+            ## this field is the only field of the key, and the key is serial
+            @javax.validation.constraints.Null(groups={Insert.class})
+            @javax.validation.constraints.NotNull(groups={Update.class})
+        #elseif($keyUnique.items.contains($field.databaseColumn))
+            ## this field is within the fields of the key, the key is non-serial
+            @javax.validation.constraints.NotNull(groups={Insert.class,Update.class})
+        #elseif($field.source=="table"&&$field.notnull)
+            ## this field is a normal table column, not null
+            @javax.validation.constraints.NotNull(groups={Insert.class,Update.class})
+        #elseif($field.source=="table")
+            ## this field is a normal table column, nullable
+        #elseif($field.source=="view")
+            ## this field is a view column
+            @javax.validation.constraints.Null(groups={Insert.class,Update.class})
+        #end
+        ## constraint annotation of getter
+        #if(!($keyUnique.serial&&$keyUnique.items.contains($field.databaseColumn)))
+            ## if not (this field is the only key and the key is serial)
+            #if($field.javaType=="Integer")
+                @javax.validation.constraints.Min(value=CONSTRAINT_$field.databaseColumn.toUpperCase()_MIN)
+                @javax.validation.constraints.Max(value=CONSTRAINT_$field.databaseColumn.toUpperCase()_MAX)
+            #elseif($field.javaType=="Double")
+                @javax.validation.constraints.Digits(integer=CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_FRACTION,fraction=CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_FRACTION)
+            #elseif($field.javaType=="String")
+                @javax.validation.constraints.Size(max=CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_STRING)
+            #end
+        #end
+        ## getter
+        public $field.javaType get$StringUtils.capitalize($field.databaseColumn) () {
+            return $field.databaseColumn;
+        }
+        ## setter
+        public $module.jteeBeanAlias set$StringUtils.capitalize($field.databaseColumn) ($field.javaType $field.databaseColumn) {
+            this.$field.databaseColumn=$field.databaseColumn;
+            return this;
+        }
+        //endregion
+
+    #end
+
+    ## constructor
+    public $module.jteeBeanAlias (
+        #foreach($field in $module.fields)
+            $field.javaType $field.databaseColumn
+            #if($velocityHasNext)
+                ,
+            #end
+        #end
+    ){
+        #foreach($field in $module.fields)
+            if($field.databaseColumn!=null)
+                this.$field.databaseColumn=$field.databaseColumn;
+        #end
+    }
+
+    ## constructor
+    public $module.jteeBeanAlias () {
+        this(
+            #foreach($field in $module.fields)
+                null
+                #if($velocityHasNext)
+                    ,
+                #end
+            #end
+        );
+    }
+
+    ## clone
+    public $module.jteeBeanAlias clone() {
+        return new $module.jteeBeanAlias (
+            #foreach($field in $module.fields)
+                $field.databaseColumn
+                #if($velocityHasNext)
+                    ,
+                #end
+            #end
+        );
+    }
+}

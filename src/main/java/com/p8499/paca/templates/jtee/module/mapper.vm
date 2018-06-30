@@ -1,0 +1,523 @@
+## Context:
+##   Class JsonPath
+##   Class StringUtils
+##   LinkedHashMap project
+##   Integer index
+#set($projectContext=$JsonPath.parse($project))
+
+#set($module=$project.modules[$index])
+package ${project.envJtee.packageMapper}.${module.datasource};
+
+import java.util.List;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Insert;
+import org.apache.ibatis.annotations.Update;
+import org.apache.ibatis.annotations.Delete;
+import org.apache.ibatis.annotations.Param;
+import org.springframework.stereotype.Component;
+import ${project.envJtee.packageBase}.FilterExpr;
+import ${project.envJtee.packageBase}.OrderByListExpr;
+import ${project.envJtee.packageMask}.${module.jteeMaskAlias};
+import ${project.envJtee.packageBean}.${module.jteeBeanAlias};
+
+@Component("$StringUtils.uncapitalize($module.jteeMapperAlias)")
+public interface $module.jteeMapperAlias {
+    #set($datasource=$projectContext.read("$.envJtee.datasources[?(@.id=='$module.datasource')]")[0])
+    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+    ## exists
+    #set($value="")
+    #set($value=$value+"SELECT COUNT(*)>0 FROM $module.databaseView WHERE")
+    #foreach($keyItem in $keyUnique.items)
+        #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+        #if($velocityCount>1)
+            #set($value=$value+" AND")
+        #end
+        #set($value=$value+" $keyField.databaseColumn.toUpperCase()=#{$keyField.databaseColumn}")
+    #end
+    @Select("$value")
+    boolean exists (
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            #if($velocityCount>1)
+                ,
+            #end
+            @Param("$keyField.databaseColumn") $keyField.javaType $keyField.databaseColumn
+        #end
+    );
+
+    ## get
+    #set($value="")
+    #set($value=$value+"<"+"script"+">")
+    #set($value=$value+"<"+"choose"+">")
+    #set($value=$value+"<"+"when test='mask!=null'>")
+    ## when mask is null
+    #set($value=$value+"<"+"if test='")
+    #foreach($field in $module.fields)
+        #if($velocityCount>1)
+            #set($value=$value+" or ")
+        #end
+        #set($value=$value+"mask.$field.databaseColumn")
+    #end
+    #set($value=$value+"'"+">")
+    #set($value=$value+"<"+"trim prefix='SELECT' suffixOverrides=','"+">")
+    #foreach($field in $module.fields)
+        #set($value=$value+"<"+"if test='mask.$field.databaseColumn'"+">")
+        #set($value=$value+"$field.databaseColumn.toUpperCase(), ")
+        #set($value=$value+"</"+"if"+">")
+    #end
+    #set($value=$value+"</"+"trim"+">")
+    #set($value=$value+"FROM $module.databaseView WHERE")
+    #foreach($keyItem in $keyUnique.items)
+        #if($velocityCount>1)
+            #set($value=$value+" AND")
+        #end
+        #set($value=$value+" $keyItem.toUpperCase()=#{$keyItem}")
+    #end
+    #set($value=$value+"</"+"if"+">")
+    ## ~when mask is null
+    #set($value=$value+"</"+"when"+">")
+    #set($value=$value+"<"+"otherwise"+">")
+    ## when mask is not null
+    #set($value=$value+"SELECT")
+    #foreach($field in $module.fields)
+        #if($velocityCount>1)
+            #set($value=$value+",")
+        #end
+        #set($value=$value+"$field.databaseColumn.toUpperCase()")
+    #end
+    #set($value=$value+" FROM $module.databaseView WHERE")
+    #foreach($keyItem in $keyUnique.items)
+        #if($velocityCount>1)
+            #set($value=$value+" AND")
+        #end
+        #set($value=$value+" $keyItem.toUpperCase()=#{$keyItem}")
+    #end
+    ## ~when mask is not null
+    #set($value=$value+"</"+"otherwise"+">")
+    #set($value=$value+"</"+"choose"+">")
+    #set($value=$value+"</"+"script"+">")
+    @Select("$value")
+    $module.jteeBeanAlias get (
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            @Param("$keyField.databaseColumn") $keyField.javaType $keyField.databaseColumn,
+        #end
+        @Param("mask") $module.jteeMaskAlias mask
+    );
+
+    ##add
+    #if($datasource.databaseType=="oracle")
+        #if($keyUnique.serial)
+            ## this table is in oracle database and its key is serial
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyUnique.items[0]')]")[0]) ## in this case, there should be only one keyField
+            @org.apache.ibatis.annotations.SelectKey(statement = "SELECT ${module.databaseTable}_${keyField.databaseColumn}.nextval AS ${keyField.databaseColumn} FROM DUAL",before = true,resultType = ${keyField.javaType}.class,keyColumn = "${keyField.databaseColumn}",keyProperty = "bean.${keyField.databaseColumn}")
+            #set($value="")
+            #set($value=$value+"INSERT INTO $module.databaseTable (")
+            #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
+                #if($velocityCount>1)
+                    #set($value=$value+",")
+                #end
+                #set($value=$value+"$physicalField.databaseColumn.toUpperCase()")
+            #end
+            #set($value=$value+") VALUES (")
+            #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
+                #if($velocityCount>1)
+                    #set($value=$value+",")
+                #end
+                #set($value=$value+"#{bean.$physicalField.databaseColumn,jdbcType=")
+                #if($physicalField.javaType=="Integer")
+                    #if($physicalField.integerLength<5)
+                        #set($value=$value+"SMALLINT")
+                    #elseif($physicalField.integerLength<9)
+                        #set($value=$value+"INTEGER")
+                    #else
+                        #set($value=$value+"BIGINT")
+                    #end
+                #elseif($physicalField.javaType=="Double")
+                    #set($value=$value+"DOUBLE")
+                #elseif($physicalField.javaType=="String")
+                    #set($value=$value+"VARCHAR")
+                #elseif($physicalField.javaType=="java.util.Date")
+                    #set($value=$value+"TIMESTAMP")
+                #end
+                #set($value=$value+"}")
+            #end
+            #set($value=$value+")")
+            @Insert("$value")
+        #else
+            ## this table is in oracle database and its key is not serial
+            #set($value="")
+            #set($value=$value+"INSERT INTO $module.databaseTable (")
+            #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
+                #if($velocityCount>1)
+                    #set($value=$value+",")
+                #end
+                #set($value=$value+"$physicalField.databaseColumn.toUpperCase()")
+            #end
+            #set($value=$value+") VALUES (")
+            #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
+                #if($velocityCount>1)
+                    #set($value=$value+",")
+                #end
+                #set($value=$value+"#{bean.$physicalField.databaseColumn,jdbcType=")
+                #if($physicalField.javaType=="Integer")
+                    #if($physicalField.integerLength<5)
+                        #set($value=$value+"SMALLINT")
+                    #elseif($physicalField.integerLength<9)
+                        #set($value=$value+"INTEGER")
+                    #else
+                        #set($value=$value+"BIGINT")
+                    #end
+                #elseif($physicalField.javaType=="Double")
+                    #set($value=$value+"DOUBLE")
+                #elseif($physicalField.javaType=="String")
+                    #set($value=$value+"VARCHAR")
+                #elseif($physicalField.javaType=="java.util.Date")
+                    #set($value=$value+"TIMESTAMP")
+                #end
+                #set($value=$value+"}")
+            #end
+            #set($value=$value+")")
+            @Insert("$value")
+        #end
+    #elseif($datasource.databaseType=="postgresql")
+        #if($keyUnique.serial)
+            ## this table is in postgresql database and its key is serial
+            #set($value="")
+            #set($value=$value+"INSERT INTO $module.databaseTable (")
+            #foreach($attributeField in $projectContext.read("$.modules[$index].fields[?(@.databaseColumn nin $keyUnique.items && @.source=='table')]"))
+                #if($velocityCount>1)
+                    #set($value=$value+",")
+                #end
+                #set($value=$value+"$attributeField.databaseColumn.toUpperCase()")
+            #end
+            #set($value=$value+") VALUES (")
+            #foreach($attributeField in $projectContext.read("$.modules[$index].fields[?(@.databaseColumn nin $keyUnique.items && @.source=='table')]"))
+                #if($velocityCount>1)
+                    #set($value=$value+",")
+                #end
+                #set($value=$value+"#{bean.$attributeField.databaseColumn,jdbcType=")
+                #if($attributeField.javaType=="Integer")
+                    #if($attributeField.integerLength)<5)
+                        #set($value=$value+"SMALLINT")
+                    #elseif($attributeField.integerLength<9)
+                        #set($value=$value+"INTEGER")
+                    #else
+                        #set($value=$value+"BIGINT")
+                    #end
+                #elseif($attributeField.javaType=="Double")
+                    #set($value=$value+"DOUBLE")
+                #elseif($attributeField.javaType=="String")
+                    #set($value=$value+"VARCHAR")
+                #elseif($attributeField.javaType=="java.util.Date")
+                    #set($value=$value+"TIMESTAMP")
+                #end
+                #set($value=$value+"}")
+            #end
+            #set($value=$value+")")
+            @Insert("$value")
+            @org.apache.ibatis.annotations.Options(useGeneratedKeys=true,keyProperty="bean.$keyUnique.items[0]")
+        #else
+            ## this table is in postgresql database and its key is not serial
+            #set($value="")
+            #set($value=$value+"INSERT INTO $module.databaseTable (")
+            #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
+                #if($velocityCount>1)
+                    #set($value=$value+",")
+                #end
+                #set($value=$value+"$physicalField.databaseColumn.toUpperCase()")
+            #end
+            #set($value=$value+") VALUES (")
+            #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
+                #if($velocityCount>1)
+                    #set($value=$value+",")
+                #end
+                #set($value=$value+"#{bean.$physicalField.databaseColumn,jdbcType=")
+                #if($physicalField.javaType=="Integer")
+                    #if($physicalField.integerLength<5)
+                        #set($value=$value+"SMALLINT")
+                    #elseif($physicalField.integerLength<9)
+                        #set($value=$value+"INTEGER")
+                    #else
+                        #set($value=$value+"BIGINT")
+                    #end
+                #elseif($physicalField.javaType=="Double")
+                    #set($value=$value+"DOUBLE")
+                #elseif($physicalField.javaType=="String")
+                    #set($value=$value+"VARCHAR")
+                #elseif($physicalField.javaType=="java.util.Date")
+                    #set($value=$value+"TIMESTAMP")
+                #end
+                #set($value=$value+"}")
+            #end
+            #set($value=$value+")")
+            @Insert("$value")
+        #end
+    #end
+    void add(@Param("bean")$module.jteeBeanAlias bean);
+
+    ## update
+    #set($value="")
+    #set($value=$value+"<"+"script"+">")
+    #set($value=$value+"<"+"choose"+">")
+    #set($value=$value+"<"+"when test='mask!=null'"+">")
+    #set($value=$value+"<"+"if test='")
+    #foreach($attributeField in $projectContext.read("$.modules[$index].fields[?(@.databaseColumn nin $keyUnique.items && @.source=='table')]"))
+        #if($velocityCount>1)
+            #set($value=$value+" or ")
+        #end
+        #set($value=$value+"mask.$attributeField.databaseColumn")
+    #end
+    #set($value=$value+"'"+">")
+    #set($value=$value+"UPDATE $module.databaseTable ")
+    #set($value=$value+"<"+"set"+">")
+    #foreach($attributeField in $projectContext.read("$.modules[$index].fields[?(@.databaseColumn nin $keyUnique.items && @.source=='table')]"))
+        #set($value=$value+"<"+"if test='mask.$attributeField.databaseColumn'"+">")
+        #set($value=$value+"$attributeField.databaseColumn.toUpperCase()=#{bean.$attributeField.databaseColumn,jdbcType=")
+        #if($attributeField.javaType=="Integer")
+            #if($attributeField.integerLength<5)
+                #set($value=$value+"SMALLINT")
+            #elseif($attributeField.integerLength<9)
+                #set($value=$value+"INTEGER")
+            #else
+                #set($value=$value+"BIGINT")
+            #end
+        #elseif($attributeField.javaType=="Double")
+            #set($value=$value+"DOUBLE")
+        #elseif($attributeField.javaType=="String")
+            #set($value=$value+"VARCHAR")
+        #elseif($attributeField.javaType=="java.util.Date")
+            #set($value=$value+"TIMESTAMP")
+        #end
+        #set($value=$value+"}, ")
+        #set($value=$value+"</"+"if"+">")
+    #end
+    #set($value=$value+"</"+"set"+">")
+    #set($value=$value+"WHERE")
+    #foreach($keyItem in $keyUnique.items)
+        #if($velocityCount>1)
+            #set($value=$value+" AND")
+        #end
+        #set($value=$value+" $keyItem.toUpperCase()=#{bean.$keyItem}")
+    #end
+    #set($value=$value+"</"+"if"+">")
+    #set($value=$value+"</"+"when"+">")
+    #set($value=$value+"<"+"otherwise"+">")
+    #set($value=$value+"UPDATE $module.databaseTable SET")
+    #foreach($attributeField in $projectContext.read("$.modules[$index].fields[?(@.databaseColumn nin $keyUnique.items && @.source=='table')]"))
+        #if($velocityCount>1)
+            #set($value=$value+",")
+        #end
+        #set($value=$value+" $attributeField.databaseColumn.toUpperCase()=#{bean.$attributeField.databaseColumn,jdbcType=")
+        #if($attributeField.javaType=="Integer")
+            #if($attributeField.integerLength<5)
+                #set($value=$value+"SMALLINT")
+            #elseif($attributeField.integerLength<9)
+                #set($value=$value+"INTEGER")
+            #else
+                #set($value=$value+"BIGINT")
+            #end
+        #elseif($attributeField.javaType=="Double")
+            #set($value=$value+"DOUBLE")
+        #elseif($attributeField.javaType=="String")
+            #set($value=$value+"VARCHAR")
+        #elseif($attributeField.javaType=="java.util.Date")
+            #set($value=$value+"TIMESTAMP")
+        #end
+        #set($value=$value+"}")
+    #end
+    #set($value=$value+" WHERE")
+    #foreach($keyItem in $keyUnique.items)
+        #if($velocityCount>1)
+            #set($value=$value+" AND")
+        #end
+        #set($value=$value+" $keyItem.toUpperCase()=#{bean.$keyItem}")
+    #end
+    #set($value=$value+"</"+"otherwise"+">")
+    #set($value=$value+"</"+"choose"+">")
+    #set($value=$value+"</"+"script"+">")
+    @Update("$value")
+    void update(@Param("bean")$module.jteeBeanAlias bean,@Param("mask")$module.jteeMaskAlias mask);
+
+    ## delete
+    #set($value="")
+    #set($value=$value+"DELETE FROM $module.databaseTable WHERE")
+    #foreach($keyItem in $keyUnique.items)
+        #if($velocityCount>1)
+            #set($value=$value+" AND")
+        #end
+        #set($value=$value+" $keyItem.toUpperCase()=#{$keyItem}")
+    #end
+    @Delete("$value")
+    boolean delete (
+        #foreach($keyItem in $keyUnique.items)
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
+            #if($velocityCount>1)
+                ,
+            #end
+            $keyField.javaType $keyField.databaseColumn
+        #end
+    );
+
+    ## deleteWhere
+    #if($datasource.databaseType=="oracle")
+        #set($value="")
+        #set($value=$value+"<"+"script"+">")
+        #set($value=$value+"DELETE FROM $module.databaseTable")
+        #set($value=$value+"<"+"if test='filter!=null'"+">")
+        #set($value=$value+" WHERE #[[${filter.toStringOracle()}]]#")
+        #set($value=$value+"</"+"if"+">")
+        #set($value=$value+"</"+"script"+">")
+        @Delete("$value")
+    #elseif($datasource.databaseType=="postgresql")
+        #set($value="")
+        #set($value=$value+"<"+"script"+">")
+        #set($value=$value+"DELETE FROM $module.databaseTable")
+        #set($value=$value+"<"+"if test='filter!=null'"+">")
+        #set($value=$value+" WHERE #[[${filter.toStringPostgresql()}]]#")
+        #set($value=$value+"</"+"if"+">")
+        #set($value=$value+"</"+"script"+">")
+        @Delete("$value")
+    #end
+    void deleteWhere(@Param("filter") FilterExpr filter);
+
+    ## query
+    #if($datasource.databaseType=="oracle")
+        #set($value="")
+        #set($value=$value+"<"+"script"+">")
+        #set($value=$value+"SELECT A.* FROM (SELECT B.*, ROWNUM B_ROWNUM FROM (")
+        #set($value=$value+"<"+"choose"+">")
+        #set($value=$value+"<"+"when test='mask!=null'"+">")
+        #set($value=$value+"<"+"trim prefix='SELECT' suffixOverrides=','"+">")
+        #foreach($field in $module.fields)
+            #set($value=$value+"<"+"if test='mask.$field.databaseColumn'"+">")
+                #set($value=$value+"$field.databaseColumn,")
+            #set($value=$value+"</"+"if"+">")
+        #end
+        #set($value=$value+"</"+"trim"+">")
+        #set($value=$value+"</"+"when"+">")
+        #set($value=$value+"<"+"otherwise"+">")
+        #set($value=$value+"SELECT")
+        #foreach($field in $module.fields)
+            #if($velocityCount>1)
+                #set($value=$value+",")
+            #end
+            #set($value=$value+" $field.databaseColumn")
+        #end
+        #set($value=$value+"</"+"otherwise"+">")
+        #set($value=$value+"</"+"choose"+">")
+        #set($value=$value+" FROM $module.databaseView")
+        #set($value=$value+"<"+"if test='filter!=null'"+">")
+        #set($value=$value+" WHERE #[[${filter.toStringOracle()}]]#")
+        #set($value=$value+"</"+"if"+">")
+        #set($value=$value+"<"+"if test='order!=null'"+">")
+        #set($value=$value+" ORDER BY #[[${order.toString()}]]#")
+        #set($value=$value+"</"+"if"+">")
+        #set($value=$value+") B WHERE ROWNUM &lt;=#{start}+#{count}) A WHERE B_ROWNUM &gt;=#{start}+1")
+        #set($value=$value+"</"+"script"+">")
+        @Select("$value")
+    #elseif($datasource.databaseType=="postgresql")
+        #set($value="")
+        #set($value=$value+"<"+"script"+">")
+        #set($value=$value+"<"+"choose"+">")
+        #set($value=$value+"<"+"when test='mask!=null'"+">")
+        #set($value=$value+"<"+"trim prefix='SELECT' suffixOverrides=','"+">")
+        #foreach($field in $module.fields)
+            #set($value=$value+"<"+"if test='mask.$field.databaseColumn'"+">")
+                #set($value=$value+"$field.databaseColumn,")
+            #set($value=$value+"</"+"if"+">")
+        #end
+        #set($value=$value+"</"+"trim"+">")
+        #set($value=$value+"</"+"when"+">")
+        #set($value=$value+"<"+"otherwise"+">")
+        #set($value=$value+"SELECT")
+        #foreach($field in $module.fields)
+            #if($velocityCount>1)
+                #set($value=$value+",")
+            #end
+            #set($value=$value+" $field.databaseColumn")
+        #end
+        #set($value=$value+"</"+"otherwise"+">")
+        #set($value=$value+"</"+"choose"+">")
+        #set($value=$value+" FROM $module.databaseView")
+        #set($value=$value+"<"+"if test='filter!=null'"+">")
+        #set($value=$value+" WHERE #[[${filter.toStringPostgresql()}]]#")
+        #set($value=$value+"</"+"if"+">")
+        #set($value=$value+"<"+"if test='order!=null'"+">")
+        #set($value=$value+" ORDER BY #[[${order.toString()}]]#")
+        #set($value=$value+"</"+"if"+">")
+        #set($value=$value+" LIMIT #{count} OFFSET #{start}")
+        #set($value=$value+"</"+"script"+">")
+        @Select("$value")
+    #end
+    List<$module.jteeBeanAlias> query(@Param("filter")FilterExpr filter,@Param("order")OrderByListExpr order,@Param("start")long start,@Param("count")long count,@Param("mask")$module.jteeMaskAlias mask);
+
+    ## count
+    #if($datasource.databaseType=="oracle")
+        #set($value="")
+        #set($value=$value+"<"+"script"+">")
+        #set($value=$value+"SELECT COUNT(*) FROM $module.databaseView")
+        #set($value=$value+"<"+"if test='filter!=null'"+">")
+        #set($value=$value+" #[[${filter.toStringOracle()}]]#")
+        #set($value=$value+"</"+"if"+">")
+        #set($value=$value+"</"+"script"+">")
+        @Select("$value")
+    #elseif($datasource.databaseType=="postgresql")
+        #set($value="")
+        #set($value=$value+"<"+"script"+">")
+        #set($value=$value+"SELECT COUNT(*) FROM $module.databaseView")
+        #set($value=$value+"<"+"if test='filter!=null'"+">")
+        #set($value=$value+" #[[${filter.toStringPostgresql()}]]#")
+        #set($value=$value+"</"+"if"+">")
+        #set($value=$value+"</"+"script"+">")
+        @Select("$value")
+    #end
+    long count(@Param("filter")FilterExpr filter);
+
+    ## for each comparable field
+    #foreach($comparableField in $projectContext.read("$.modules[$index].fields[?(@.javaType in ['Integer','Double','java.util.Date'])]"))
+        ## min
+        #if($datasource.databaseType=="oracle")
+            #set($value="")
+            #set($value=$value+"<"+"script"+">")
+            #set($value=$value+"SELECT DECODE(MIN($comparableField.databaseColumn.toUpperCase()),NULL,#[[${defaultValue}]]#) FROM $module.databaseView")
+            #set($value=$value+"<"+"if test='filter!=null'"+">")
+            #set($value=$value+" WHERE #[[${filter.toStringOracle()}]]#")
+            #set($value=$value+"</"+"if"+">")
+            #set($value=$value+"</"+"script"+">")
+            @Select("$value")
+        #elseif($datasource.databaseType=="postgresql")
+            #set($value="")
+            #set($value=$value+"<"+"script"+">")
+            #set($value=$value+"SELECT COALESCE(MIN($comparableField.databaseColumn.toUpperCase()),#[[${defaultValue}]]#) FROM $module.databaseView")
+            #set($value=$value+"<"+"if test='filter!=null'"+">")
+            #set($value=$value+" WHERE #[[${filter.toStringPostgresql()}]]#")
+            #set($value=$value+"</"+"if"+">")
+            #set($value=$value+"</"+"script"+">")
+            @Select("$value")
+        #end
+        $comparableField.javaType min$StringUtils.capitalize($comparableField.databaseColumn) (@Param("filter") FilterExpr filter,@Param("defaultValue") $comparableField.javaType defaultValue);
+
+        ## max
+        #if($datasource.databaseType=="oracle")
+            #set($value="")
+            #set($value=$value+"<"+"script"+">")
+            #set($value=$value+"SELECT DECODE(MAX($comparableField.databaseColumn.toUpperCase()),NULL,#[[${defaultValue}]]#) FROM $module.databaseView")
+            #set($value=$value+"<"+"if test='filter!=null'"+">")
+            #set($value=$value+" WHERE #[[${filter.toStringOracle()}]]#")
+            #set($value=$value+"</"+"if"+">")
+            #set($value=$value+"</"+"script"+">")
+            @Select("$value")
+        #elseif($datasource.databaseType=="postgresql")
+            #set($value="")
+            #set($value=$value+"<"+"script"+">")
+            #set($value=$value+"SELECT COALESCE(MAX($comparableField.databaseColumn.toUpperCase()),#[[${defaultValue}]]#) FROM $module.databaseView")
+            #set($value=$value+"<"+"if test='filter!=null'"+">")
+            #set($value=$value+" WHERE #[[${filter.toStringPostgresql()}]]#")
+            #set($value=$value+"</"+"if"+">")
+            #set($value=$value+"</"+"script"+">")
+            @Select("$value")
+        #end
+        $comparableField.javaType max$StringUtils.capitalize($comparableField.databaseColumn) (@Param("filter") FilterExpr filter,@Param("defaultValue") $comparableField.javaType defaultValue);
+    #end
+}
