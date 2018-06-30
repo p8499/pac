@@ -26,6 +26,7 @@ Sales項目一共包含三個業務對象，分別是
 * Record（銷售記錄）
 
 ### 視圖字段
+
 通過界面左側樹結點找到Employee對象的Fields，留意右側列表，它有一個字段的Source是view，即emamount。這代表emamount不屬於表字段，而是一個可通過邏輯計算出其值的視圖字段  
 視圖字段可以用於對象的select/count等讀操作，但不可用於insert/update等寫操作  
 然而具體如何計算emamount，則需要程序員在建模後通過sql來實現  
@@ -34,6 +35,7 @@ Sales項目一共包含三個業務對象，分別是
 此例中，Employee.emamount、Product.imamount分別代表單一銷售員的銷售總額和單一產品的銷售總額
 
 ### 字段前綴
+
 建議爲每個Module設定一個前綴，用於其每個Field的開頭  
 此舉可以避免Java端編寫業務邏輯使用exists條件時的列名衝突
 
@@ -41,4 +43,13 @@ Sales項目一共包含三個業務對象，分別是
 
 ## 運行生成的代碼
 
-首先你要將
+要運行生成的代碼，需要按以下步驟執行
+
+### 準備數據庫
+
+在樹結點的Project->J2EE Environment->Datasources中可以看到項目使用的所有數據庫鏈接  
+PAC支持多數據源，但是目前狀態下PAC只支持Oracle和Postgresql兩種數據庫產品  
+
+此例中，你需要保證db01數據庫安裝正常、數據庫服務通暢和username用戶擁有CREATE TABLE、CREATE VIEW、CREATE SEQUENCE和連接權限
+
+###
