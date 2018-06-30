@@ -31,9 +31,13 @@ Sales項目一共包含三個業務對象，分別是
 然而具體如何計算emamount，則需要程序員在建模後通過sql來實現  
 同樣的，Product對象也有一個view字段，它是imamount
 
+此例中，Employee.emamount、Product.imamount分別代表單一銷售員的銷售額和單一產品的銷售額
+
 ### 字段前綴
 建議爲每個Module設定一個前綴，用於其每個Field的開頭  
 此舉可以避免Java端編寫業務邏輯使用exists條件時的列名衝突
+
+此例中，Employee、Product和Record的字段前綴分別爲em、im和re
 
 ## 運行生成的代碼
 
