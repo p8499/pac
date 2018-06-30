@@ -11,7 +11,7 @@ A tool for modeling and code generating.
 然後依次通過菜單
 * Project->Generate->Database Scripts
 * Project->Generate->J2EE Project
-* Project->Generate->Android Module
+* Project->Generate->Android Module  
 生成3種最終項目代碼，並將牠們擺在同一個目標文件夾內
 
 ### 示例項目概覽
