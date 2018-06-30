@@ -8,7 +8,11 @@ A tool for modeling and code generating.
 ### 生成項目代碼
 在界面上選擇菜單Source->New->Sample Project以打開示例項目。也直接通過撳快捷鍵Ctrl+P來打開  
 示例項目是一個簡易的Sales題材的項目  
-然後依次通過菜單Project->Generate->Database Scripts、Project->Generate->J2EE Project、Project->Generate->Android Module生成3種最終項目代碼，並將牠們擺在同一個目標文件夾內
+然後依次通過菜單
+* Project->Generate->Database Scripts
+* Project->Generate->J2EE Project
+* Project->Generate->Android Module
+生成3種最終項目代碼，並將牠們擺在同一個目標文件夾內
 
 ### 示例項目概覽
 Sales項目一共包含三個業務對象，分別是
