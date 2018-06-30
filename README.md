@@ -50,6 +50,6 @@ Sales項目一共包含三個業務對象，分別是
 在樹結點的Project->J2EE Environment->Datasources中可以看到項目使用的所有數據庫鏈接  
 PAC支持多數據源，但是目前狀態下PAC只支持Oracle和Postgresql兩種數據庫產品  
 
-此例中，你需要保證db01數據庫安裝正常、數據庫服務通暢和username用戶擁有CREATE TABLE、CREATE VIEW、CREATE SEQUENCE和連接權限
+此例中，你需要保證db01數據庫安裝正常、數據庫服務通暢以及username用戶擁有CREATE TABLE、CREATE VIEW、CREATE SEQUENCE和連接權限
 
 ###
