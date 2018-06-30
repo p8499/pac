@@ -31,7 +31,7 @@ Sales項目一共包含三個業務對象，分別是
 然而具體如何計算emamount，則需要程序員在建模後通過sql來實現  
 同樣的，Product對象也有一個view字段，它是imamount
 
-此例中，Employee.emamount、Product.imamount分別代表單一銷售員的銷售額和單一產品的銷售額
+此例中，Employee.emamount、Product.imamount分別代表單一銷售員的銷售總額和單一產品的銷售總額
 
 ### 字段前綴
 建議爲每個Module設定一個前綴，用於其每個Field的開頭  
