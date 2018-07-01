@@ -75,4 +75,5 @@ PAC會爲每一個數據源創建一系列sql文件
 
 在產生的數據庫腳本中如果存在txt文件，則代表其中的sql有需要你手動修改的部分
 
-此例中，將
+此例中，將db01_create_view_Employee.txt、db01_create_view_Product.txt分別複製成文件
+db01_create_view_Employee.sql、db01_create_view_Product.sql，區別只是其擴展名
