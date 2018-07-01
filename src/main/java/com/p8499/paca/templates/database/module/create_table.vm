@@ -29,9 +29,10 @@
                     BIGINT
                 #end
             #elseif($physicalField.javaType=="Double")
-                NUMBER($physicalField.integerLength+$physicalField.fractionLength,$physicalField.fractionLength)
+                #set($fullLength=$physicalField.integerLength+$physicalField.fractionLength)
+                NUMBER($fullLength,$physicalField.fractionLength)
             #elseif($physicalField.javaType=="String")
-                NVARCHAR2
+                NVARCHAR2($physicalField.stringLength)
             #elseif($physicalField.javaType=="java.util.Date")
                 TIMESTAMP
             #end
@@ -104,9 +105,10 @@
                     BIGINT
                 #end
             #elseif($physicalField.javaType=="Double")
-                DECIMAL($physicalField.integerLength+$physicalField.fractionLength,$physicalField.fractionLength)
+                #set($fullLength=$physicalField.integerLength+$physicalField.fractionLength)
+                DECIMAL($fullLength,$physicalField.fractionLength)
             #elseif($physicalField.javaType=="String")
-                VARCHAR
+                VARCHAR($physicalField.stringLength)
             #elseif($physicalField.javaType=="java.util.Date")
                 TIMESTAMP
             #end

@@ -37,8 +37,8 @@ public class CreateViewGenerator extends Generator1 {
     @Override
     public File getPath(File folder, int index) throws Exception {
         Map project = (Map) getContext().get("project");
-        String id = (String) ((Map) ((List) project.get("modules")).get(index)).get("id");
-        return new File(folder, String.format("create_view_%s.sql", id));
+        Map module = (Map) ((List) project.get("modules")).get(index);
+        return new File(folder, String.format("%s_create_view_%s.sql", module.get("datasource"), module.get("id")));
     }
 
     @Override

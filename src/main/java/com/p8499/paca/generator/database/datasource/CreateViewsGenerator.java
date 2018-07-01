@@ -1,13 +1,9 @@
-package com.p8499.paca.generator.database.module;
+package com.p8499.paca.generator.database.datasource;
 
 import com.jayway.jsonpath.JsonPath;
 import com.p8499.paca.Generator1;
 import gudusoft.gsqlparser.EDbVendor;
 import gudusoft.gsqlparser.TGSqlParser;
-import gudusoft.gsqlparser.pp.para.GFmtOpt;
-import gudusoft.gsqlparser.pp.para.GFmtOptFactory;
-import gudusoft.gsqlparser.pp.para.styleenums.TCaseOption;
-import gudusoft.gsqlparser.pp.para.styleenums.TCompactMode;
 import gudusoft.gsqlparser.pp.stmtformattor.FormattorFactory;
 import org.apache.commons.lang.StringUtils;
 import org.apache.velocity.Template;
@@ -22,8 +18,8 @@ import java.util.Map;
 /**
  * Created by Administrator on 6/27/2018.
  */
-public class DropTableGenerator extends Generator1 {
-    public DropTableGenerator(Map project) {
+public class CreateViewsGenerator extends Generator1 {
+    public CreateViewsGenerator(Map project) {
         super(project);
         getContext().put("Integer", Integer.class);
         getContext().put("String", String.class);
@@ -37,8 +33,8 @@ public class DropTableGenerator extends Generator1 {
     @Override
     public File getPath(File folder, int index) throws Exception {
         Map project = (Map) getContext().get("project");
-        Map module = (Map) ((List) project.get("modules")).get(index);
-        return new File(folder, String.format("%s_drop_table_%s.sql", module.get("datasource"), module.get("id")));
+        Map datasource = (Map) ((List) ((Map) project.get("envJtee")).get("datasources")).get(index);
+        return new File(folder, String.format("%s_create_views.sql", datasource.get("id")));
     }
 
     @Override
@@ -48,7 +44,7 @@ public class DropTableGenerator extends Generator1 {
         String databaseType = (String) ((Map) ((List) JsonPath.parse(project).read(String.format("$.envJtee.datasources[?(@.id=='%s')]", datasource))).get(0)).get("databaseType");
         //
         getContext().put("index", index);
-        Template template = getVelocityEngine().getTemplate("com/p8499/paca/templates/database/module/drop_table.vm");
+        Template template = getVelocityEngine().getTemplate("com/p8499/paca/templates/database/datasource/create_views.vm");
         Writer bufferWriter = new StringWriter();
         template.merge(getContext(), bufferWriter);
         bufferWriter.flush();

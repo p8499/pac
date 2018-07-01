@@ -1,0 +1,6 @@
+##   LinkedHashMap project
+##   Integer index
+
+#set($datasource=$project.envJtee.datasources[$index])
+@${datasource.id}_create_tables;
+@${datasource.id}_create_views;

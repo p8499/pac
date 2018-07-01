@@ -1,0 +1,12 @@
+##   JsonPath
+##   Class ArrayUtils
+##   LinkedHashMap project
+##   Integer index
+#set($projectContext=$JsonPath.parse($project))
+
+#set($datasource=$project.envJtee.datasources[$index])
+#set($moduleArray=$projectContext.read("$.modules[?(@.datasource=='$datasource.id')]").toArray())
+$ArrayUtils.reverse($moduleArray)
+#foreach($module in $moduleArray)
+    @${datasource.id}_drop_table_${module.id}.sql;
+#end

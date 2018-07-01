@@ -48,22 +48,33 @@ public class Main {
     }
 
     public static void generateDatabase(Map project, File outputDir) throws Exception {
-        new com.p8499.paca.generator.database.InstallOracleGenerator(project).writeTo(outputDir);
-        new com.p8499.paca.generator.database.InstallPostgresqlGenerator(project).writeTo(outputDir);
-        new com.p8499.paca.generator.database.UninstallOracleGenerator(project).writeTo(outputDir);
-        new com.p8499.paca.generator.database.UninstallPostgresqlGenerator(project).writeTo(outputDir);
         com.p8499.paca.generator.database.module.CreateTableGenerator createTableGenerator = new com.p8499.paca.generator.database.module.CreateTableGenerator(project);
         com.p8499.paca.generator.database.module.DropTableGenerator dropTableGenerator = new com.p8499.paca.generator.database.module.DropTableGenerator(project);
         com.p8499.paca.generator.database.module.CreateViewGenerator createViewGenerator = new com.p8499.paca.generator.database.module.CreateViewGenerator(project);
-        com.p8499.paca.generator.database.module.BaseCreateViewGenerator baseCreateViewGenerator = new com.p8499.paca.generator.database.module.BaseCreateViewGenerator(project);
+        com.p8499.paca.generator.database.module.CreateViewBaseGenerator createViewBaseGenerator = new com.p8499.paca.generator.database.module.CreateViewBaseGenerator(project);
         com.p8499.paca.generator.database.module.DropViewGenerator dropViewGenerator = new com.p8499.paca.generator.database.module.DropViewGenerator(project);
         List modules = (List) project.get("modules");
         for (int i = 0; i < modules.size(); i++) {
             createTableGenerator.writeTo(outputDir, i);
             dropTableGenerator.writeTo(outputDir, i);
             createViewGenerator.writeTo(outputDir, i);
-            baseCreateViewGenerator.writeTo(outputDir, i);
+            createViewBaseGenerator.writeTo(outputDir, i);
             dropViewGenerator.writeTo(outputDir, i);
+        }
+        com.p8499.paca.generator.database.datasource.CreateAllGenerator createAllGenerator = new com.p8499.paca.generator.database.datasource.CreateAllGenerator(project);
+        com.p8499.paca.generator.database.datasource.DropAllGenerator dropAllGenerator = new com.p8499.paca.generator.database.datasource.DropAllGenerator(project);
+        com.p8499.paca.generator.database.datasource.CreateTablesGenerator createTablesGenerator = new com.p8499.paca.generator.database.datasource.CreateTablesGenerator(project);
+        com.p8499.paca.generator.database.datasource.DropTablesGenerator dropTablesGenerator = new com.p8499.paca.generator.database.datasource.DropTablesGenerator(project);
+        com.p8499.paca.generator.database.datasource.CreateViewsGenerator createViewsGenerator = new com.p8499.paca.generator.database.datasource.CreateViewsGenerator(project);
+        com.p8499.paca.generator.database.datasource.DropViewsGenerator dropViewsGenerator = new com.p8499.paca.generator.database.datasource.DropViewsGenerator(project);
+        List datasources = (List) ((Map) project.get("envJtee")).get("datasources");
+        for (int i = 0; i < datasources.size(); i++) {
+            createAllGenerator.writeTo(outputDir, i);
+            dropAllGenerator.writeTo(outputDir, i);
+            createTablesGenerator.writeTo(outputDir, i);
+            dropTablesGenerator.writeTo(outputDir, i);
+            createViewsGenerator.writeTo(outputDir, i);
+            dropViewsGenerator.writeTo(outputDir, i);
         }
     }
 

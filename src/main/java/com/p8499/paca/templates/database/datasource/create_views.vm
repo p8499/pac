@@ -1,0 +1,9 @@
+##   JsonPath
+##   LinkedHashMap project
+##   Integer index
+#set($projectContext=$JsonPath.parse($project))
+
+#set($datasource=$project.envJtee.datasources[$index])
+#foreach($module in $projectContext.read("$.modules[?(@.datasource=='$datasource.id')]"))
+    @${datasource.id}_create_view_${module.id}.sql;
+#end
