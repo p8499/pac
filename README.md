@@ -57,8 +57,8 @@ PAC支持多數據源，但是目前狀態下PAC只支持Oracle和Postgresql兩�
 PAC會爲每一個數據源創建一系列sql文件
 
 * create_all
- * create_tables
-  * create_table_Xxx
+    * create_tables
+        * create_table_Xxx
  * create_views
   * create_view_Xxx (.sql or .txt)
 * drop_all
