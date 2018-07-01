@@ -52,4 +52,27 @@ PAC支持多數據源，但是目前狀態下PAC只支持Oracle和Postgresql兩�
 
 此例中，你需要保證db01數據庫安裝正常、數據庫服務通暢以及username用戶擁有CREATE TABLE、CREATE VIEW、CREATE SEQUENCE和連接權限
 
-###
+### 創建Tables
+
+PAC會爲每一個數據源創建一系列sql文件
+
+* create_all
+** create_tables
+*** create_table_Xxx
+** create_views
+*** create_view_Xxx (.sql or .txt)
+* drop_all
+** drop_tables
+*** drop_table_Xxx
+** drop_views
+*** drop_view_Xxx
+
+因爲視圖有可能需要你手動編輯，所以先運行create_tables而不是create_all
+
+此例中，cd至Sales_scripts，使用sqlplus連接到數據庫db01，然後運行@db01_create_tables.sql
+
+### 實現視圖字段
+
+在產生的數據庫腳本中如果存在txt文件，則代表其中的sql有需要你手動修改的部分
+
+此例中，將
