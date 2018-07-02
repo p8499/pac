@@ -11,11 +11,11 @@ A tool for modeling and code generating.
 在界面上選擇菜單Source->New->Sample Project以打開示例項目。也直接通過撳快捷鍵Ctrl+P來打開  
 示例項目是一個簡易的Sales題材的項目
 
-然後依次通過以下菜單生成3種最終項目代碼，並將它們擺在同一個目標文件夾內
+然後依次通過以下菜單生成3種最終項目代碼
 
-* Project->Generate->Database Scripts
-* Project->Generate->J2EE Project
-* Project->Generate->Android Module
+* Project->Generate->Database Scripts（數據庫腳本）
+* Project->Generate->J2EE Project（運行於Tomcat的Web項目基類）
+* Project->Generate->Android Module（Android項目的模塊）
 
 ## 示例項目概覽
 
@@ -77,3 +77,35 @@ PAC會爲每一個數據源創建一系列sql文件
 
 此例中，將db01_create_view_Employee.txt、db01_create_view_Product.txt分別複製成文件
 db01_create_view_Employee.sql、db01_create_view_Product.sql，區別只是其擴展名
+
+然後修改文件如下
+|db01_create_view_Employee.txt|db01_create_view_Employee.sql|
+| ---------- | -----------|
+|```Sql
+/**
+     * ID: Employee
+     * Description: Employee master table
+     */
+
+CREATE VIEW F0101View AS SELECT 
+/*Employee ID*/ t0.EMID EMID , 
+/*Employee Status*/ t0.EMSTATUS EMSTATUS , 
+/*Employee Gender*/ t0.EMGENDER EMGENDER , 
+/*Employee Name*/ t0.EMNAME EMNAME , 
+/*Total Sales Amount*/ nvl(t1.AMOUNT,0) EMAMOUNT FROM F0101 t0
+LEFT JOIN (SELECT REEMID EMID, sum(IMPRICE*REQTY) AMOUNT FROM F4211 LEFT JOIN F4101 ON REIMID = IMID GROUP BY REEMID) t1 ON t1.EMID=t0.EMID;
+```|```Sql
+/**
+     * ID: Product
+     * Description: Product master table
+     */
+
+CREATE VIEW F4101View AS SELECT 
+/*Product ID*/ t0.IMID IMID , 
+/*Product Name*/ t0.IMNAME IMNAME , 
+/*Product Price*/ t0.IMPRICE IMPRICE , 
+/*Total Sales Amount*/ t0.IMPRICE*nvl(t1.REQTY,0) IMAMOUNT FROM F4101 t0
+LEFT JOIN (SELECT REIMID REIMID, sum(REQTY) REQTY FROM F4211 GROUP BY REIMID) t1 ON t1.REIMID=t0.IMID;
+```|
+
+
