@@ -152,3 +152,17 @@ LEFT JOIN (SELECT REIMID REIMID, sum(REQTY) REQTY FROM F4211 GROUP BY REIMID) t1
 
 此例中，cd至Sales_scripts，使用sqlplus連接到數據庫db01，然後運行@db01_create_views.sql
 
+### 實現Controller
+
+scripts部分告一段落，接下去看Web項目  
+跳轉到所生成的J2EE項目，即本例的Sales文件夾，在這裏PAC生成的是符合MVC設計規範的Web項目代碼  
+大致分成以下幾種Class
+
+* Bean（對象）
+* Mask（對象掩碼，在只讀取、只更新一個對象的某些字段而非全部字段的場景下使用）
+* Mapper（mybatis的sql映射文件）
+* Service（數據庫service類）
+* ControllerBase（Spring的controller基類，需要繼承之來編寫實際controller）
+* 其他輔助class（如日期轉換、查詢語句串行化、反串行化等class）
+
+此例中，進入Sales/src/main/java/test/sales/controller，添加如下三個controller類
