@@ -330,7 +330,7 @@ public class RecordController extends RecordControllerBase {
 | Request Parameters |  |
 | Request Body | {"emid":1001,"emstatus":0,"emgender":"M","emname":"Jovi Phoe"} |
 | Response | {"emid":1001,"emstatus":0,"emgender":"M","emname":"Jovi Phoe"} |
-| Response Code | 403 |
+| Response Code | 200 |
 
 測試update服務
 
@@ -343,7 +343,7 @@ public class RecordController extends RecordControllerBase {
 | Request Parameters | mask={"emstatus":true} |
 | Request Body | {"emid":1001,"emstatus":1} |
 | Response | {"emid":1001,"emstatus":1} |
-| Response Code | 403 |
+| Response Code | 200 |
 
 測試get服務
 
@@ -356,7 +356,7 @@ public class RecordController extends RecordControllerBase {
 | Request Parameters |  |
 | Request Body | |
 | Response | {"emid":1001,"emstatus":1,"emgender":"M","emname":"Jovi Phoe","emamount":0.0} |
-| Response Code | 403 |
+| Response Code | 200 |
 
 測試delete服務
 
