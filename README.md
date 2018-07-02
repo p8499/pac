@@ -319,7 +319,7 @@ public class RecordController extends RecordControllerBase {
 
 使用Idea自帶REST Client或Postman或其他Web服務測試工具進行測試
 
-|  | 測試add服務 |
+|   測試add服務 |
 | ---------- | -----------|
 | HTTP method | POST |
 | Host/port | http://127.0.0.1:80 |
@@ -327,3 +327,4 @@ public class RecordController extends RecordControllerBase {
 | Headers | Content-Type=application/json;charset=UTF-8 |
 | Request Parameters |  |
 | Request Body | {"emid":1001,"emstatus":0,"emgender":"M","emname":"Jovi Phoe"} |
+| Response | {"emid":1001,"emstatus":0,"emgender":"M","emname":"Jovi Phoe"} |
