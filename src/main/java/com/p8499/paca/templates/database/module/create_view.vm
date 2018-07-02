@@ -18,12 +18,12 @@
             #end
             /*$field.description*/
             #if($field.source=='table')
-                t0.$field.databaseColumn.toUpperCase() AS $field.databaseColumn.toUpperCase()
+                t0.$field.databaseColumn.toUpperCase() $field.databaseColumn.toUpperCase()
             #elseif($field.source=='view')
-                ? AS $field.databaseColumn.toUpperCase()
+                ? $field.databaseColumn.toUpperCase()
             #end
         #end
     FROM
-        $module.databaseTable AS t0;
+        $module.databaseTable t0;
 #end
 		
