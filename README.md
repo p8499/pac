@@ -79,9 +79,9 @@ PAC會爲每一個數據源創建一系列sql文件
 db01_create_view_Employee.sql、db01_create_view_Product.sql，區別只是其擴展名
 
 然後修改文件如下
-|db01_create_view_Employee.txt|db01_create_view_Employee.sql|
+| db01_create_view_Employee.txt | db01_create_view_Employee.sql |
 | ---------- | -----------|
-|```Sql
+| ```Sql
 /**
      * ID: Employee
      * Description: Employee master table
@@ -94,7 +94,7 @@ CREATE VIEW F0101View AS SELECT
 /*Employee Name*/ t0.EMNAME EMNAME , 
 /*Total Sales Amount*/ nvl(t1.AMOUNT,0) EMAMOUNT FROM F0101 t0
 LEFT JOIN (SELECT REEMID EMID, sum(IMPRICE*REQTY) AMOUNT FROM F4211 LEFT JOIN F4101 ON REIMID = IMID GROUP BY REEMID) t1 ON t1.EMID=t0.EMID;
-```|```Sql
+``` | ```Sql
 /**
      * ID: Product
      * Description: Product master table
@@ -106,6 +106,6 @@ CREATE VIEW F4101View AS SELECT
 /*Product Price*/ t0.IMPRICE IMPRICE , 
 /*Total Sales Amount*/ t0.IMPRICE*nvl(t1.REQTY,0) IMAMOUNT FROM F4101 t0
 LEFT JOIN (SELECT REIMID REIMID, sum(REQTY) REQTY FROM F4211 GROUP BY REIMID) t1 ON t1.REIMID=t0.IMID;
-```|
+``` |
 
 
