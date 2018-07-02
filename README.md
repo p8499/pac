@@ -321,9 +321,9 @@ public class RecordController extends RecordControllerBase {
 
 |  | 測試add服務 |
 | ---------- | -----------|
-| HTTP method | 表格单元   |
-| Host/port | 表格单元   |
-| Path | 表格单元   |
-| Headers | 表格单元   |
-| Request Parameters | 表格单元   |
-| Request Body | |
+| HTTP method | POST |
+| Host/port | http://127.0.0.1:80 |
+| Path | Sales/api/Employee/1001 |
+| Headers | Content-Type=application/json;charset=UTF-8 |
+| Request Parameters |  |
+| Request Body | {"emid":1001,"emstatus":0,"emgender":"M","emname":"Jovi Phoe"} |
