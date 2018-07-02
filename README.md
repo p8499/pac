@@ -218,3 +218,85 @@ public class EmployeeController extends EmployeeControllerBase {
 }
 ```
 
+ProductController
+
+```Java
+package test.sales.controller;
+
+//import ...
+
+@RestController
+public class ProductController extends ProductControllerBase {
+    @Override
+    protected Product onGet(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer imid, ProductMask mask) throws Exception {
+        return productService.get(imid, mask);
+    }
+
+    @Override
+    protected Product onAdd(HttpSession session, HttpServletRequest request, HttpServletResponse response, Product bean) throws Exception {
+        return productService.add(bean);
+    }
+
+    @Override
+    protected Product onUpdate(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer imid, Product bean, ProductMask mask) throws Exception {
+        return productService.update(bean, mask);
+    }
+
+    @Override
+    protected void onDelete(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer imid) throws Exception {
+        productService.delete(imid);
+    }
+
+    @Override
+    protected Long onCount(HttpSession session, HttpServletRequest request, HttpServletResponse response, FilterExpr filter) throws Exception {
+        return productService.count(filter);
+    }
+
+    @Override
+    protected List<Product> onQuery(HttpSession session, HttpServletRequest request, HttpServletResponse response, FilterExpr filter, OrderByListExpr orderByList, long start, long count, ProductMask mask) throws Exception {
+        return productService.query(filter, orderByList, start, count, mask);
+    }
+}
+```
+
+RecordController
+
+```Java
+package test.sales.controller;
+
+//import ...
+
+@RestController
+public class RecordController extends RecordControllerBase {
+    @Override
+    protected Record onGet(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer reid, RecordMask mask) throws Exception {
+        return recordService.get(reid, mask);
+    }
+
+    @Override
+    protected Record onAdd(HttpSession session, HttpServletRequest request, HttpServletResponse response, Record bean) throws Exception {
+        return recordService.add(bean);
+    }
+
+    @Override
+    protected Record onUpdate(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer reid, Record bean, RecordMask mask) throws Exception {
+        return recordService.update(bean, mask);
+    }
+
+    @Override
+    protected void onDelete(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer reid) throws Exception {
+        recordService.delete(reid);
+    }
+
+    @Override
+    protected Long onCount(HttpSession session, HttpServletRequest request, HttpServletResponse response, FilterExpr filter) throws Exception {
+        return recordService.count(filter);
+    }
+
+    @Override
+    protected List<Record> onQuery(HttpSession session, HttpServletRequest request, HttpServletResponse response, FilterExpr filter, OrderByListExpr orderByList, long start, long count, RecordMask mask) throws Exception {
+        return recordService.query(filter, orderByList, start, count, mask);
+    }
+}
+```
+
