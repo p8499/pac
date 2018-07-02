@@ -169,3 +169,78 @@ scripts部分告一段落，接下去看Web項目
 故這裏設計爲程序員創建Controller繼承ControllerBase的形式
 
 此例中，進入Sales/src/main/java/test/sales/controller，添加如下三個controller類
+
+```Java
+package test.sales.controller;
+
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.RestController;
+import test.sales.FilterExpr;
+import test.sales.OrderByListExpr;
+import test.sales.bean.Employee;
+import test.sales.controller.base.EmployeeControllerBase;
+import test.sales.mask.EmployeeMask;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.*;
+
+@RestController
+public class EmployeeController extends EmployeeControllerBase {
+    @Override
+    protected Employee onGet(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer emid, EmployeeMask mask) throws Exception {
+        //just fetch the record and return
+        return employeeService.get(emid, mask);
+    }
+
+    @Override
+    protected Employee onAdd(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer emid, Employee bean) throws Exception {
+        //add and return the bean itself
+        return employeeService.add(bean);
+    }
+
+    @Override
+    protected Employee onUpdate(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer emid, Employee bean, EmployeeMask mask) throws Exception {
+        //update and return the bean itself
+        return employeeService.update(bean, mask);
+    }
+
+    @Override
+    protected void onDelete(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer emid) throws Exception {
+        //here we simulate an HTTP-409 error code
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+    }
+
+    @Override
+    protected Long onCount(HttpSession session, HttpServletRequest request, HttpServletResponse response, FilterExpr filter) throws Exception {
+        //count and return
+        return employeeService.count(filter);
+    }
+
+    @Override
+    protected List<Employee> onQuery(HttpSession session, HttpServletRequest request, HttpServletResponse response, FilterExpr filter, OrderByListExpr orderByList, long start, long count, EmployeeMask mask) throws Exception {
+        //query and return the list
+        return employeeService.query(filter, orderByList, start, count, mask);
+    }
+
+    @Override
+    protected InputStream inputStream(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer emid, String name) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected OutputStream outputStream(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer emid, String name) throws Exception {
+        return null;
+    }
+
+    @Override
+    protected void onDeleteAttachment(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer emid, String name) throws Exception {
+    }
+
+    @Override
+    protected List<String> onListAttachments(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer emid) throws Exception {
+        return null;
+    }
+}
+```
