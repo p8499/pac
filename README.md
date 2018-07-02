@@ -71,6 +71,10 @@ PAC會爲每一個數據源創建一系列sql文件
 
 此例中，cd至Sales_scripts，使用sqlplus連接到數據庫db01，然後運行@db01_create_tables.sql
 
+### 插入測試數據
+
+插入測試數據有助於調試view、controller等各種功能
+
 ### 實現視圖字段
 
 在產生的數據庫腳本中如果存在txt文件，則代表其中的sql有需要你手動修改的部分
@@ -305,6 +309,8 @@ public class RecordController extends RecordControllerBase {
 
 ### 編譯J2EE項目
 
-在生成的J2EE文件夾下有build.gradle文件，代表這是一個gradle項目
+在生成的J2EE文件夾下有build.gradle文件，代表這是一個gradle項目  
+如果你的項目中使用Oracle的數據庫，則需要自行前往oracle.com下載其最新JDBC驅動ojdbc6.jar，然後擺到J2EE根目錄下，於build.gradle平級
 
-此例中，cd至Sales文件夾下，運行gradle build，然後可直接將build/libs/Sales.war部署到Tomcat的webapp文件夾
+此例中，複製ojdbc6.jar至Sales  
+再cd至Sales文件夾下，運行gradle build，然後可直接將build/libs/Sales.war部署到Tomcat的webapp文件夾
