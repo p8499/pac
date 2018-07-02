@@ -11,11 +11,11 @@ A tool for modeling and code generating.
 在界面上選擇菜單Source->New->Sample Project以打開示例項目。也直接通過撳快捷鍵Ctrl+P來打開  
 示例項目是一個簡易的Sales題材的項目
 
-然後依次通過以下菜單生成3種最終項目代碼，並將它們擺在同一個目標文件夾內
+然後依次通過以下菜單生成3種最終項目代碼
 
-* Project->Generate->Database Scripts
-* Project->Generate->J2EE Project
-* Project->Generate->Android Module
+* Project->Generate->Database Scripts（數據庫腳本）
+* Project->Generate->J2EE Project（運行於Tomcat的Web項目基類）
+* Project->Generate->Android Module（Android項目的模塊）
 
 ## 示例項目概覽
 
@@ -77,3 +77,78 @@ PAC會爲每一個數據源創建一系列sql文件
 
 此例中，將db01_create_view_Employee.txt、db01_create_view_Product.txt分別複製成文件
 db01_create_view_Employee.sql、db01_create_view_Product.sql，區別只是其擴展名
+
+然後修改文件如下
+
+原始文件db01_create_view_Employee.txt
+
+```Sql
+/**
+     * ID: Employee
+     * Description: Employee master table
+     */
+
+CREATE VIEW F0101View AS SELECT 
+/*Employee ID*/ t0.EMID EMID , 
+/*Employee Status*/ t0.EMSTATUS EMSTATUS , 
+/*Employee Gender*/ t0.EMGENDER EMGENDER , 
+/*Employee Name*/ t0.EMNAME EMNAME , 
+/*Total Sales Amount*/ ? EMAMOUNT FROM F0101 t0;
+```
+
+複製成db01_create_view_Employee.sql，並編輯爲
+
+```Sql
+/**
+     * ID: Employee
+     * Description: Employee master table
+     */
+
+CREATE VIEW F0101View AS SELECT 
+/*Employee ID*/ t0.EMID EMID , 
+/*Employee Status*/ t0.EMSTATUS EMSTATUS , 
+/*Employee Gender*/ t0.EMGENDER EMGENDER , 
+/*Employee Name*/ t0.EMNAME EMNAME , 
+/*Total Sales Amount*/ nvl(t1.AMOUNT,0) EMAMOUNT FROM F0101 t0
+LEFT JOIN (SELECT REEMID EMID, sum(IMPRICE*REQTY) AMOUNT FROM F4211 LEFT JOIN F4101 ON REIMID = IMID GROUP BY REEMID) t1 ON t1.EMID = t0.EMID;
+```
+
+原始文件db01_create_view_Product.txt
+
+```Sql
+/**
+     * ID: Product
+     * Description: Product master table
+     */
+
+CREATE VIEW F4101View AS SELECT 
+/*Product ID*/ t0.IMID IMID , 
+/*Product Name*/ t0.IMNAME IMNAME , 
+/*Product Price*/ t0.IMPRICE IMPRICE , 
+/*Total Sales Amount*/ ? IMAMOUNT FROM F4101 t0;
+```
+
+複製成db01_create_view_Employee.sql，並編輯爲
+
+```Sql
+/**
+     * ID: Product
+     * Description: Product master table
+     */
+
+CREATE VIEW F4101View AS SELECT 
+/*Product ID*/ t0.IMID IMID , 
+/*Product Name*/ t0.IMNAME IMNAME , 
+/*Product Price*/ t0.IMPRICE IMPRICE , 
+/*Total Sales Amount*/ t0.IMPRICE*nvl(t1.REQTY,0) IMAMOUNT FROM F4101 t0
+LEFT JOIN (SELECT REIMID REIMID, sum(REQTY) REQTY FROM F4211 GROUP BY REIMID) t1 ON t1.REIMID = t0.IMID;
+```
+
+### 創建Views
+
+當視圖全部實現後，即可運行create_views腳本  
+當然如果沒有任何視圖字段需要手動實現，那麼可以直接跳過上一步而直接運行create_views  
+在這種情況下，更簡便的方式則是直接運行create_all來取代create_tables和create_views
+
+此例中，cd至Sales_scripts，使用sqlplus連接到數據庫db01，然後運行@db01_create_views.sql
+
