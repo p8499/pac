@@ -143,3 +143,12 @@ CREATE VIEW F4101View AS SELECT
 /*Total Sales Amount*/ t0.IMPRICE*nvl(t1.REQTY,0) IMAMOUNT FROM F4101 t0
 LEFT JOIN (SELECT REIMID REIMID, sum(REQTY) REQTY FROM F4211 GROUP BY REIMID) t1 ON t1.REIMID=t0.IMID;
 ```
+
+### 創建Views
+
+當視圖全部實現後，即可運行create_views腳本  
+當然如果沒有任何視圖字段需要手動實現，那麼可以直接跳過上一步而直接運行create_views  
+在這種情況下，更簡便的方式則是直接運行create_all來取代create_tables和create_views
+
+此例中，cd至Sales_scripts，使用sqlplus連接到數據庫db01，然後運行@db01_create_views.sql
+
