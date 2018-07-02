@@ -155,7 +155,8 @@ LEFT JOIN (SELECT REIMID REIMID, sum(REQTY) REQTY FROM F4211 GROUP BY REIMID) t1
 ### 實現Controller
 
 scripts部分告一段落，接下去看Web項目  
-跳轉到所生成的J2EE項目，即本例的Sales文件夾，在這裏PAC生成的是符合MVC設計規範的Web項目代碼  
+PAC生成的J2EE項目，可以使用支持gradle的IDE（例如Idea）直接打開  
+在這裏，PAC生成的是符合MVC設計規範的Web項目代碼  
 大致分成以下幾種Class
 
 * Bean（對象）
@@ -302,3 +303,8 @@ public class RecordController extends RecordControllerBase {
 }
 ```
 
+### 編譯J2EE項目
+
+在生成的J2EE文件夾下有build.gradle文件，代表這是一個gradle項目
+
+此例中，cd至Sales文件夾下，運行gradle build，然後可直接將build/libs/Sales.war部署到Tomcat的webapp文件夾
