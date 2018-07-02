@@ -310,7 +310,20 @@ public class RecordController extends RecordControllerBase {
 ### 編譯J2EE項目
 
 在生成的J2EE文件夾下有build.gradle文件，代表這是一個gradle項目  
-如果你的項目中使用Oracle的數據庫，則需要自行前往oracle.com下載其最新JDBC驅動ojdbc6.jar，然後擺到J2EE根目錄下，於build.gradle平級
+如果你的項目中使用Oracle的數據庫，則需要自行前往oracle.com下載其最新JDBC驅動ojdbc6.jar，然後擺到J2EE根目錄下，與build.gradle平級
 
 此例中，複製ojdbc6.jar至Sales  
 再cd至Sales文件夾下，運行gradle build，然後可直接將build/libs/Sales.war部署到Tomcat的webapp文件夾
+
+### 測試J2EE服務
+
+使用Idea自帶REST Client或Postman或其他Web服務測試工具進行測試
+
+|  | 測試add服務 |
+| ---------- | -----------|
+| HTTP method | 表格单元   |
+| Host/port | 表格单元   |
+| Path | 表格单元   |
+| Headers | 表格单元   |
+| Request Parameters | 表格单元   |
+| Request Body | |
