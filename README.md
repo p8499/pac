@@ -256,6 +256,7 @@ public class ProductController extends ProductControllerBase {
     protected List<Product> onQuery(HttpSession session, HttpServletRequest request, HttpServletResponse response, FilterExpr filter, OrderByListExpr orderByList, long start, long count, ProductMask mask) throws Exception {
         return productService.query(filter, orderByList, start, count, mask);
     }
+    //inherit other methods
 }
 ```
 
@@ -297,6 +298,7 @@ public class RecordController extends RecordControllerBase {
     protected List<Record> onQuery(HttpSession session, HttpServletRequest request, HttpServletResponse response, FilterExpr filter, OrderByListExpr orderByList, long start, long count, RecordMask mask) throws Exception {
         return recordService.query(filter, orderByList, start, count, mask);
     }
+    //inherit other methods
 }
 ```
 
