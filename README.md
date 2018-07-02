@@ -159,7 +159,7 @@ scripts部分告一段落，接下去看Web項目
 大致分成以下幾種Class
 
 * Bean（對象）
-* Mask（對象掩碼，在只讀取、只更新一個對象的某些字段而非全部字段的場景下使用）
+* Mask（對象掩碼，在只讀取、更新一個對象的某些字段而非全部字段的場景下使用）
 * Mapper（mybatis的sql映射文件）
 * Service（數據庫service類）
 * ControllerBase（Spring的controller基類，需要繼承之來編寫實際controller）
