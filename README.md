@@ -330,16 +330,44 @@ public class RecordController extends RecordControllerBase {
 | Request Parameters |  |
 | Request Body | {"emid":1001,"emstatus":0,"emgender":"M","emname":"Jovi Phoe"} |
 | Response | {"emid":1001,"emstatus":0,"emgender":"M","emname":"Jovi Phoe"} |
+| Response Code | 403 |
 
 測試update服務
 
 | 參數或返回 | 值 |
 | ---------- | -----------|
-| HTTP method | POST |
+| HTTP method | PUT |
 | Host/port | http://127.0.0.1:80 |
 | Path | Sales/api/Employee/1001 |
 | Headers | Content-Type=application/json;charset=UTF-8 |
 | Request Parameters | mask={"emstatus":true} |
 | Request Body | {"emid":1001,"emstatus":1} |
 | Response | {"emid":1001,"emstatus":1} |
+| Response Code | 403 |
+
+測試get服務
+
+| 參數或返回 | 值 |
+| ---------- | -----------|
+| HTTP method | GET |
+| Host/port | http://127.0.0.1:80 |
+| Path | Sales/api/Employee/1001 |
+| Headers | Content-Type=application/json;charset=UTF-8 |
+| Request Parameters |  |
+| Request Body | |
+| Response | {"emid":1001,"emstatus":1,"emgender":"M","emname":"Jovi Phoe","emamount":0.0} |
+| Response Code | 403 |
+
+測試delete服務
+
+| 參數或返回 | 值 |
+| ---------- | -----------|
+| HTTP method | DELETE |
+| Host/port | http://127.0.0.1:80 |
+| Path | Sales/api/Employee/1001 |
+| Headers | Content-Type=application/json;charset=UTF-8 |
+| Request Parameters |  |
+| Request Body | |
+| Response |  |
+| Response Code | 403 |
 
