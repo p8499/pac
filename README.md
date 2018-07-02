@@ -170,21 +170,12 @@ scripts部分告一段落，接下去看Web項目
 
 此例中，進入Sales/src/main/java/test/sales/controller，添加如下三個controller類
 
+EmployeeController
+
 ```Java
 package test.sales.controller;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.RestController;
-import test.sales.FilterExpr;
-import test.sales.OrderByListExpr;
-import test.sales.bean.Employee;
-import test.sales.controller.base.EmployeeControllerBase;
-import test.sales.mask.EmployeeMask;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.*;
+//import ...
 
 @RestController
 public class EmployeeController extends EmployeeControllerBase {
@@ -223,24 +214,7 @@ public class EmployeeController extends EmployeeControllerBase {
         //query and return the list
         return employeeService.query(filter, orderByList, start, count, mask);
     }
-
-    @Override
-    protected InputStream inputStream(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer emid, String name) throws Exception {
-        return null;
-    }
-
-    @Override
-    protected OutputStream outputStream(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer emid, String name) throws Exception {
-        return null;
-    }
-
-    @Override
-    protected void onDeleteAttachment(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer emid, String name) throws Exception {
-    }
-
-    @Override
-    protected List<String> onListAttachments(HttpSession session, HttpServletRequest request, HttpServletResponse response, Integer emid) throws Exception {
-        return null;
-    }
+   //inherit other methods
 }
 ```
+
