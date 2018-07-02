@@ -319,7 +319,6 @@ public class RecordController extends RecordControllerBase {
 
 使用Idea自帶REST Client或Postman或其他Web服務測試工具進行測試
 
-|   測試add服務 |
 | ---------- | -----------|
 | HTTP method | POST |
 | Host/port | http://127.0.0.1:80 |
