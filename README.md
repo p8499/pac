@@ -165,4 +165,7 @@ scripts部分告一段落，接下去看Web項目
 * ControllerBase（Spring的controller基類，需要繼承之來編寫實際controller）
 * 其他輔助class（如日期轉換、查詢語句串行化、反串行化等class）
 
+對於Controller來講，PAC生成的基類代碼已經使得業務邏輯層面的編程變得極爲簡單，但是各接口開放與不開放、具體邏輯仍需程序員自行定義  
+故這裏設計爲程序員創建Controller繼承ControllerBase的形式
+
 此例中，進入Sales/src/main/java/test/sales/controller，添加如下三個controller類
