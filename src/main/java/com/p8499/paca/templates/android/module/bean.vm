@@ -8,7 +8,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import ${project.envAndroid.packageBase}.DefaultDateFormatter;
-import $project.envAndroid.packageMask.$module.androidBeanAlias;
+import $project.envAndroid.packageMask.$module.androidMaskAlias;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class $module.androidBeanAlias implements Parcelable {
