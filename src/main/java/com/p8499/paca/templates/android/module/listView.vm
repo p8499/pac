@@ -3,6 +3,7 @@
 #set($module=$project.modules[$index])
 package $project.envAndroid.packageView;
 
+import java.util.List;
 import $project.envAndroid.packageBean.$module.androidBeanAlias;
 public interface $module.androidListViewAlias {
     void on${module.androidBeanAlias}ListReloaded(List<${module.androidBeanAlias}> $module.androidBeanAlias.toLowerCase()List);
