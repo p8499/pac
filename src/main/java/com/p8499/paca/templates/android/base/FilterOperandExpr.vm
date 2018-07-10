@@ -1,7 +1,7 @@
 ## Context:
 ##   LinkedHashMap project
 
-package $project.envJtee.packageBase;
+package $project.envAndroid.packageBase;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
