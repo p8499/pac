@@ -212,9 +212,10 @@ public class ApplicationController implements Initializable, EnvironmentContaine
     private void generateJtee(File folder) throws Exception {
         if (folder != null) {
             Project project = (Project) mStage.getUserData();
+            EnvJtee envJtee = project.mEnvJtee.get();
             com.p8499.paca.Main.generateJtee(
                     (Map) Configuration.defaultConfiguration().jsonProvider().parse(new ObjectMapper().writeValueAsString(project)),
-                    new File(folder, project.mName.get()));
+                    new File(folder, envJtee.mApp.get()));
         }
     }
 
