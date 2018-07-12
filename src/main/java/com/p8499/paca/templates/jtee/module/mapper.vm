@@ -110,7 +110,7 @@ public interface $module.jteeMapperAlias {
         #if($keyUnique.serial)
             ## this table is in oracle database and its key is serial
             #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyUnique.items[0]')]")[0]) ## in this case, there should be only one keyField
-            @org.apache.ibatis.annotations.SelectKey(statement = "SELECT ${module.databaseTable}_${keyField.databaseColumn}.nextval AS ${keyField.databaseColumn} FROM DUAL",before = true,resultType = ${keyField.javaType}.class,keyColumn = "${keyField.databaseColumn}",keyProperty = "bean.${keyField.databaseColumn}")
+            @org.apache.ibatis.annotations.SelectKey(statement = "SELECT ${module.databaseTable}_${keyField.databaseColumn.toUpperCase()}.nextval AS ${keyField.databaseColumn} FROM DUAL",before = true,resultType = ${keyField.javaType}.class,keyColumn = "${keyField.databaseColumn}",keyProperty = "bean.${keyField.databaseColumn}")
             #set($value="")
             #set($value=$value+"INSERT INTO $module.databaseTable (")
             #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
@@ -183,40 +183,41 @@ public interface $module.jteeMapperAlias {
     #elseif($datasource.databaseType=="postgresql")
         #if($keyUnique.serial)
             ## this table is in postgresql database and its key is serial
+            #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyUnique.items[0]')]")[0]) ## in this case, there should be only one keyField
+            @org.apache.ibatis.annotations.SelectKey(statement = "SELECT nextval(${module.databaseTable}_$keyField.databaseColumn.toUpperCase()) AS ${keyField.databaseColumn} FROM DUAL",before = true,resultType = ${keyField.javaType}.class,keyColumn = "${keyField.databaseColumn}",keyProperty = "bean.${keyField.databaseColumn}")
             #set($value="")
             #set($value=$value+"INSERT INTO $module.databaseTable (")
-            #foreach($attributeField in $projectContext.read("$.modules[$index].fields[?(@.databaseColumn nin $keyUnique.items && @.source=='table')]"))
+            #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
                 #if($velocityCount>1)
                     #set($value=$value+",")
                 #end
-                #set($value=$value+"$attributeField.databaseColumn.toUpperCase()")
+                #set($value=$value+"$physicalField.databaseColumn.toUpperCase()")
             #end
             #set($value=$value+") VALUES (")
-            #foreach($attributeField in $projectContext.read("$.modules[$index].fields[?(@.databaseColumn nin $keyUnique.items && @.source=='table')]"))
+            #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
                 #if($velocityCount>1)
                     #set($value=$value+",")
                 #end
-                #set($value=$value+"#{bean.$attributeField.databaseColumn,jdbcType=")
-                #if($attributeField.javaType=="Integer")
-                    #if($attributeField.integerLength)<5)
+                #set($value=$value+"#{bean.$physicalField.databaseColumn,jdbcType=")
+                #if($physicalField.javaType=="Integer")
+                    #if($physicalField.integerLength<5)
                         #set($value=$value+"SMALLINT")
-                    #elseif($attributeField.integerLength<9)
+                    #elseif($physicalField.integerLength<9)
                         #set($value=$value+"INTEGER")
                     #else
                         #set($value=$value+"BIGINT")
                     #end
-                #elseif($attributeField.javaType=="Double")
+                #elseif($physicalField.javaType=="Double")
                     #set($value=$value+"DOUBLE")
-                #elseif($attributeField.javaType=="String")
+                #elseif($physicalField.javaType=="String")
                     #set($value=$value+"VARCHAR")
-                #elseif($attributeField.javaType=="java.util.Date")
+                #elseif($physicalField.javaType=="java.util.Date")
                     #set($value=$value+"TIMESTAMP")
                 #end
                 #set($value=$value+"}")
             #end
             #set($value=$value+")")
             @Insert("$value")
-            @org.apache.ibatis.annotations.Options(useGeneratedKeys=true,keyProperty="bean.$keyUnique.items[0]")
         #else
             ## this table is in postgresql database and its key is not serial
             #set($value="")

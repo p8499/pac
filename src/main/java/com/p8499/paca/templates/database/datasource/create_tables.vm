@@ -5,5 +5,9 @@
 
 #set($datasource=$project.envJtee.datasources[$index])
 #foreach($module in $projectContext.read("$.modules[?(@.datasource=='$datasource.id')]"))
-    @${datasource.id}_create_table_${module.id}.sql;
+    #if($datasource.databaseType=="oracle")
+        @${datasource.id}_create_table_${module.id}.sql;
+    #elseif($datasource.databaseType=="postgresql")
+        \i ./${datasource.id}_create_table_${module.id}.sql;
+    #end
 #end

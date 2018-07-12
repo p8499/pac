@@ -2,5 +2,10 @@
 ##   Integer index
 
 #set($datasource=$project.envJtee.datasources[$index])
-@${datasource.id}_create_tables;
-@${datasource.id}_create_views;
+#if($datasource.databaseType=="oracle")
+    @${datasource.id}_create_tables.sql;
+    @${datasource.id}_create_views.sql;
+#elseif($datasource.databaseType=="postgresql")
+    \i ./${datasource.id}_create_tables.sql;
+    \i ./${datasource.id}_create_views.sql;
+#end

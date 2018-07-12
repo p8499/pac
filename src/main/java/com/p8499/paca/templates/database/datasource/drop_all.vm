@@ -2,5 +2,10 @@
 ##   Integer index
 
 #set($datasource=$project.envJtee.datasources[$index])
-@${datasource.id}_drop_views;
-@${datasource.id}_drop_tables;
+#if($datasource.databaseType=="oracle")
+    @${datasource.id}_drop_views.sql;
+    @${datasource.id}_drop_tables.sql;
+#elseif($datasource.databaseType=="postgresql")
+    \i ./${datasource.id}_drop_views.sql;
+    \i ./${datasource.id}_drop_tables.sql;
+#end

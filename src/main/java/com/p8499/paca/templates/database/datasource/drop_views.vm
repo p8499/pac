@@ -8,5 +8,9 @@
 #set($moduleArray=$projectContext.read("$.modules[?(@.datasource=='$datasource.id')]").toArray())
 $ArrayUtils.reverse($moduleArray)
 #foreach($module in $moduleArray)
+    #if($datasource.databaseType=="oracle")
     @${datasource.id}_drop_view_${module.id}.sql;
+    #elseif($datasource.databaseType=="postgresql")
+    \i ./${datasource.id}_drop_view_${module.id}.sql;
+    #end
 #end

@@ -16,11 +16,15 @@
     #foreach($serialUnique in $projectContext.read("$.modules[$index].uniques[?(@.serial)]"))
         DROP SEQUENCE ${module.databaseTable}_$serialUnique.items[0].toUpperCase();
     #end
-    ##create table
+    ##table
     DROP TABLE $module.databaseTable;
 #elseif($datasource.databaseType=="postgresql")
     ##postgresql
     SET CLIENT_ENCODING = UTF8;
-    ##create table
+    ##sequences
+    #foreach($serialUnique in $projectContext.read("$.modules[$index].uniques[?(@.serial)]"))
+        DROP SEQUENCE ${module.databaseTable}_$serialUnique.items[0].toUpperCase();
+    #end
+    ##table
     DROP TABLE $module.databaseTable;
 #end

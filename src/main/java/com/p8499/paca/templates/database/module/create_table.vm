@@ -12,7 +12,7 @@
  */
 #if($datasource.databaseType=="oracle")
     ##oracle
-    ##create table
+    ##table
     CREATE TABLE $module.databaseTable (
         #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
             #if($velocityCount>1)
@@ -86,7 +86,7 @@
 #elseif($datasource.databaseType=="postgresql")
     ##postgresql
     SET CLIENT_ENCODING = UTF8;
-    ##create table
+    ##table
     CREATE TABLE $module.databaseTable (
         #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
             #if($velocityCount>1)
@@ -94,9 +94,7 @@
             #end
             /*$physicalField.description*/
             $physicalField.databaseColumn.toUpperCase()
-            #if($keyUnique.serial&&$keyUnique.items.contains($physicalField.databaseColumn))
-                SERIAL
-            #elseif($physicalField.javaType=="Integer")
+            #if($physicalField.javaType=="Integer")
                 #if($physicalField.integerLength<5)
                     SMALLINT
                 #elseif($physicalField.integerLength<9)
@@ -154,5 +152,9 @@
                 $foreign.toUpperCase()
             #end
         );
+    #end
+    ##sequences
+    #foreach($serialUnique in $projectContext.read("$.modules[$index].uniques[?(@.serial)]"))
+        CREATE SEQUENCE ${module.databaseTable}_$serialUnique.items[0].toUpperCase() START WITH 1;
     #end
 #end

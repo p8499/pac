@@ -28,7 +28,7 @@ public class Test {
     public static void main(String[] args) throws IOException, FormatterException {
         //we have the project
         VelocityContext ctx = new VelocityContext();
-        Object project = Configuration.defaultConfiguration().jsonProvider().parse(new FileInputStream(new File("C:\\IdeaProjects\\paca\\build\\libs\\Sales.json")), "UTF-8");
+        Object project = Configuration.defaultConfiguration().jsonProvider().parse(new FileInputStream(new File("C:\\Users\\jdeuser\\Desktop\\ss\\Sales.json")), "UTF-8");
         ctx.put("Integer", Integer.class);
         ctx.put("String", String.class);
         ctx.put("Math", Math.class);
@@ -36,7 +36,7 @@ public class Test {
         ctx.put("JsonPath", JsonPath.class);
         ctx.put("StringUtils", StringUtils.class);
         ctx.put("project", project);
-        ctx.put("index", 0);
+        ctx.put("index", 2);
         ctx.put("ArrayUtils", ArrayUtils.class);
         //use this statement to test a json path
 //        Object x = JsonPath.parse(project).read("$.modules");
@@ -52,11 +52,11 @@ public class Test {
         ve.init();
 
         //we get the template and parse the project
-        Template t = ve.getTemplate("com/p8499/paca/templates/android/constants.vm");
+        Template t = ve.getTemplate("com/p8499/paca/templates/jtee/module/mapper.vm");
         StringWriter sw = new StringWriter();
         t.merge(ctx, sw);
-        System.out.println(sw.toString());
-//        System.out.println(new Formatter().formatSource(sw.toString()));
+        //System.out.println(sw.toString());
+        System.out.println(new Formatter().formatSource(sw.toString()));
 
 //        TGSqlParser tgSqlParser = new TGSqlParser(EDbVendor.dbvoracle);
 //        tgSqlParser.sqltext = sw.toString();
