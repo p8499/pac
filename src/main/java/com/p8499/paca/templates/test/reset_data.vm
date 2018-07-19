@@ -1,0 +1,553 @@
+## Context:
+##   Class Class
+##   Class String
+##   Class JsonPath
+##   Class ArrayUtils
+##   LinkedHashMap project
+#set($projectContext=$JsonPath.parse($project))
+
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="4.0" jmeter="4.0 r1823414">
+    <hashTree>
+        <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="reset data" enabled="true">
+            <stringProp name="TestPlan.comments">This test plan reset all rows in all tables with simulated data.</stringProp>
+            <boolProp name="TestPlan.functional_mode">false</boolProp>
+            <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
+            <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+            <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments">
+                    <elementProp name="null" elementType="Argument">
+                        <stringProp name="Argument.name">null</stringProp>
+                        <stringProp name="Argument.value">null</stringProp>
+                        <stringProp name="Argument.metadata">=</stringProp>
+                    </elementProp>
+                </collectionProp>
+            </elementProp>
+            <stringProp name="TestPlan.user_define_classpath"></stringProp>
+        </TestPlan>
+        <hashTree>
+            #foreach($datasource in $project.envJtee.datasources)
+                ## for each datasource, define jdbc config
+                <JDBCDataSource guiclass="TestBeanGUI" testclass="JDBCDataSource" testname="$datasource.id" enabled="true">
+                    <boolProp name="autocommit">true</boolProp>
+                    <stringProp name="checkQuery"></stringProp>
+                    <stringProp name="connectionAge">5000</stringProp>
+                    <stringProp name="dataSource">$datasource.id</stringProp>
+                    <stringProp name="dbUrl">$datasource.url</stringProp>
+                    #if($datasource.databaseType=="oracle")
+                        #set($driver="oracle.jdbc.OracleDriver")
+                    #elseif($datasource.databaseType=="postgresql")
+                        #set($driver="org.postgresql.Driver")
+                    #elseif($datasource.databaseType=="mysql")
+                        #set($driver="com.mysql.jdbc.Driver")
+                    #end
+                    <stringProp name="driver">$driver</stringProp>
+                    <boolProp name="keepAlive">true</boolProp>
+                    <stringProp name="password">$datasource.password</stringProp>
+                    <stringProp name="poolMax">0</stringProp>
+                    <stringProp name="timeout">10000</stringProp>
+                    <stringProp name="transactionIsolation">DEFAULT</stringProp>
+                    <stringProp name="trimInterval">60000</stringProp>
+                    <stringProp name="username">$datasource.username</stringProp>
+                </JDBCDataSource>
+                <hashTree/>
+            #end
+            #set($moduleArray=$project.modules.toArray())
+            $ArrayUtils.reverse($moduleArray)
+            #foreach($module in $moduleArray)
+                ## reversed for each modules
+                #set($moduleContext=$JsonPath.parse($module))
+                #set($serialUniques=$moduleContext.read("$.uniques[?(@.serial==true)]"))
+                <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="clear $module.id.toLowerCase()" enabled="true">
+                    #set($comments="")
+                    #set($comments=$comments+"Delete all rows of $module.databaseTable")
+                    #foreach($serialUnique in $serialUniques)
+                        #set($comments=$comments+", set sequence ${module.databaseTable}_$serialUnique.items[0].toUpperCase()")
+                    #end
+                    #set($comments=$comments+".")
+                    <stringProp name="TestPlan.comments">$comments</stringProp>
+                    <stringProp name="ThreadGroup.on_sample_error">stopthread</stringProp>
+                    <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+                        <boolProp name="LoopController.continue_forever">false</boolProp>
+                        <stringProp name="LoopController.loops">1</stringProp>
+                    </elementProp>
+                    <stringProp name="ThreadGroup.num_threads">1</stringProp>
+                    <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+                    <boolProp name="ThreadGroup.scheduler">false</boolProp>
+                    <stringProp name="ThreadGroup.duration"></stringProp>
+                    <stringProp name="ThreadGroup.delay"></stringProp>
+                </ThreadGroup>
+                <hashTree>
+                    ## delete all rows
+                    <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="delete" enabled="true">
+                        <stringProp name="dataSource">$module.datasource</stringProp>
+                        <stringProp name="queryType">Update Statement</stringProp>
+                        <stringProp name="query">DELETE FROM $module.databaseTable</stringProp>
+                        <stringProp name="queryArguments"></stringProp>
+                        <stringProp name="queryArgumentsTypes"></stringProp>
+                        <stringProp name="variableNames"></stringProp>
+                        <stringProp name="resultVariable"></stringProp>
+                        <stringProp name="queryTimeout"></stringProp>
+                        <stringProp name="resultSetHandler">Store as String</stringProp>
+                    </JDBCSampler>
+                    <hashTree/>
+                    #foreach($serialUnique in $serialUniques)
+                        ## for each serial-unique, reset its sequence
+                        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="fetch sequence $serialUnique.items[0]" enabled="true">
+                            <stringProp name="dataSource">$module.datasource</stringProp>
+                            <stringProp name="queryType">Select Statement</stringProp>
+                            <stringProp name="query">SELECT  ${module.databaseTable}_${serialUnique.items[0].toUpperCase()}.nextval FROM dual</stringProp>
+                            <stringProp name="queryArguments"></stringProp>
+                            <stringProp name="queryArgumentsTypes"></stringProp>
+                            <stringProp name="variableNames">${serialUnique.items[0]}_val</stringProp>
+                            <stringProp name="resultVariable"></stringProp>
+                            <stringProp name="queryTimeout"></stringProp>
+                            <stringProp name="resultSetHandler">Store as String</stringProp>
+                        </JDBCSampler>
+                        <hashTree/>
+                        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="alter sequence $serialUnique.items[0]" enabled="true">
+                            <stringProp name="dataSource">$module.datasource</stringProp>
+                            <stringProp name="queryType">Update Statement</stringProp>
+                            #set($increment="$"+"{"+"__intSum"+"("+"0"+","+"-"+"$"+"{"+"$serialUnique.items[0]"+"_val_1"+"}"+")"+"}")
+                            <stringProp name="query">ALTER SEQUENCE ${module.databaseTable}_${serialUnique.items[0].toUpperCase()} INCREMENT BY $increment</stringProp>
+                            <stringProp name="queryArguments"></stringProp>
+                            <stringProp name="queryArgumentsTypes"></stringProp>
+                            <stringProp name="variableNames"></stringProp>
+                            <stringProp name="resultVariable"></stringProp>
+                            <stringProp name="queryTimeout"></stringProp>
+                            <stringProp name="resultSetHandler">Store as String</stringProp>
+                        </JDBCSampler>
+                        <hashTree/>
+                        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="fetch sequence $serialUnique.items[0]" enabled="true">
+                            <stringProp name="dataSource">$module.datasource</stringProp>
+                            <stringProp name="queryType">Select Statement</stringProp>
+                            <stringProp name="query">SELECT ${module.databaseTable}_${serialUnique.items[0].toUpperCase()}.nextval FROM dual</stringProp>
+                            <stringProp name="queryArguments"></stringProp>
+                            <stringProp name="queryArgumentsTypes"></stringProp>
+                            <stringProp name="variableNames"></stringProp>
+                            <stringProp name="resultVariable"></stringProp>
+                            <stringProp name="queryTimeout"></stringProp>
+                            <stringProp name="resultSetHandler">Store as String</stringProp>
+                        </JDBCSampler>
+                        <hashTree/>
+                        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="alter sequence $serialUnique.items[0]" enabled="true">
+                            <stringProp name="dataSource">$module.datasource</stringProp>
+                            <stringProp name="queryType">Update Statement</stringProp>
+                            <stringProp name="query">ALTER SEQUENCE ${module.databaseTable}_${serialUnique.items[0].toUpperCase()} INCREMENT BY 1</stringProp>
+                            <stringProp name="queryArguments"></stringProp>
+                            <stringProp name="queryArgumentsTypes"></stringProp>
+                            <stringProp name="variableNames"></stringProp>
+                            <stringProp name="resultVariable"></stringProp>
+                            <stringProp name="queryTimeout"></stringProp>
+                            <stringProp name="resultSetHandler">Store as String</stringProp>
+                        </JDBCSampler>
+                        <hashTree/>
+                    #end
+                </hashTree>
+            #end
+            #foreach($module in $project.modules)
+                #set($moduleContext=$JsonPath.parse($module))
+                #set($datasource=$projectContext.read("$.envJtee.datasources[?(@.id=='$module.datasource')]")[0])
+                <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="insert into $module.id.toLowerCase()" enabled="true">
+                    <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+                    <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+                        <boolProp name="LoopController.continue_forever">false</boolProp>
+                        <stringProp name="LoopController.loops">500</stringProp>
+                    </elementProp>
+                    <stringProp name="ThreadGroup.num_threads">1</stringProp>
+                    <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+                    <boolProp name="ThreadGroup.scheduler">false</boolProp>
+                    <stringProp name="ThreadGroup.duration"></stringProp>
+                    <stringProp name="ThreadGroup.delay"></stringProp>
+                    <stringProp name="TestPlan.comments">Insert demo data into $module.databaseTable.</stringProp>
+                </ThreadGroup>
+                <hashTree>
+                    ##
+                    ## ****
+                    ## make the following data structure
+                    ## List referenceGroups
+                    ##   [item]: List referenceGroup
+                    ##     [item]: Map reference
+                    ##       [item]: Integer id
+                    ##       [item]: List domestics
+                    ##         [item]: String domestic
+                    ##       [item]: String foreignModule
+                    ##       [item]: List foreigns
+                    ##         [item]: String foreign
+                    ## ****
+                    ##
+                    ## create draft references of this module
+                    #set($draftReferences=$Class.forName("java.util.ArrayList").newInstance())
+                    #set($temp=$draftReferences.addAll($module.references))
+                    ## create reference groups
+                    #set($referenceGroups=$Class.forName("java.util.ArrayList").newInstance())
+                    ## move reference from draftReferences to referenceGroups
+                    #foreach($i in [0..999999])
+                        ## while draft is not empty, continue
+                        #if($draftReferences.isEmpty())
+                            #break($foreach)
+                        #end
+                        ## create referenceGroup
+                        #set($referenceGroup=$Class.forName("java.util.ArrayList").newInstance())
+                        ## move draftReferences[0] to referenceGroup
+                        #set($temp=$draftReferences[0].put("id",0))
+                        #set($temp=$referenceGroup.add($draftReferences[0]))
+                        #set($temp=$draftReferences.remove(0))
+                        ## if any reference in draft has crossed fields with current reference group, add it into the reference group
+                        ## untile no more referenced could be added into the group
+                        #set($referenceGroupContext=$JsonPath.parse($referenceGroup))
+                        #set($more=true)
+                        #foreach($i in [0..999999])
+                            #if(!$more)
+                                #break($foreach)
+                            #end
+                            #set($more=false)
+                            #foreach($reference in $draftReferences)
+                                #if($referenceGroupContext.read("$..domestics[?(@ in $reference.domestics)]").size()>0)
+                                    #set($temp=$reference.put("id",$referenceGroup.size()))
+                                    #set($temp=$referenceGroup.add($reference))
+                                    #set($temp=$draftReferences.remove($reference))
+                                    #set($more=true)
+                                    #break($foreach) ##loop again from the top
+                                #end
+                            #end
+                        #end
+                        #set($temp=$referenceGroups.add($referenceGroup))
+                    #end
+                    ##$out.println("reference groups of $module.id = $referenceGroups")
+                    ##
+                    ## for each reference group, output a fetch-key parameter
+                    #foreach($referenceGroup in $referenceGroups)
+                        #set($referenceGroupContext=$JsonPath.parse($referenceGroup))
+                        ##
+                        ## ****
+                        ## make the following data structure
+                        ## List relations
+                        ##   [item]: Map relation
+                        ##     [item]: String domestic
+                        ##     [item]: Set referenceIds
+                        ##       [item]: String referenceId
+                        ## ****
+                        ##
+                        ## create relations of this reference group
+                        #set($relations=$Class.forName("java.util.ArrayList").newInstance())
+                        #set($relationsContext=$JsonPath.parse($relations))
+                        #foreach($reference in $referenceGroup)
+                            #foreach($domestic in $reference.domestics)
+                                #if($referenceGroupContext.read("$.[?(@.id>$reference.id && @.domestics contains '$domestic')]").size()>0)
+                                    ## if we discovered this domestic to be a relation ($reference and $reference2 on $domestic)
+                                    #set($reference2=$referenceGroupContext.read("$.[?(@.id>$reference.id && @.domestics contains '$domestic')]")[0])
+                                    ## first if the domestic already exists in relations, append to the reference ids
+                                    #if($relationsContext.read("$.[?(@.domestic=='$domestic')]").size>0)
+                                        #set($relation=$relationsContext.read("$.[?(@.domestic=='$domestic'))]")[0])
+                                        #if(!$relation.referenceIds.contains($reference.id))
+                                            #set($temp=$relation.referenceIds.add($reference.id))
+                                        #end
+                                        #if(!$relation.referenceIds.contains($reference2.id))
+                                            #set($temp=$relation.referenceIds.add($reference2.id))
+                                        #end
+                                    #else
+                                        #set($referenceIds=$Class.forName("java.util.ArrayList").newInstance())
+                                        #if(!$referenceIds.contains($reference.id))
+                                            #set($temp=$referenceIds.add($reference.id))
+                                        #end
+                                        #if(!$referenceIds.contains($reference2.id))
+                                            #set($temp=$referenceIds.add($reference2.id))
+                                        #end
+                                        #set($relation=$Class.forName("java.util.HashMap").newInstance())
+                                        #set($temp=$relation.put("domestic",$domestic))
+                                        #set($temp=$relation.put("referenceIds",$referenceIds))
+                                        #set($temp=$relations.add($relation))
+                                    #end
+                                #end
+                            #end
+                        #end
+                        $out.println("reference group: $referenceGroup")
+                        $out.println("relations: $relations")
+                        ## non-repetive domestic field list of this reference group
+                        #set($domestics=$Class.forName("java.util.ArrayList").newInstance())
+                        #foreach($domestic in $referenceGroupContext.read("$..domestics.*"))
+                            #if(!$domestics.contains($domestic))
+                                #set($temp=$domestics.add($domestic))
+                            #end
+                        #end
+                        ##
+                        #set($testname="")
+                        #set($testname=$testname+"fetch ")
+                        #foreach($domestic in $domestics)
+                            #if($velocityCount>1)
+                                #set($testname=$testname+",")
+                            #end
+                            #set($testname=$testname+$domestic)
+                        #end
+                        <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="$testname" enabled="true">
+                            <stringProp name="dataSource">$module.datasource</stringProp>
+                            <stringProp name="queryType">Select Statement</stringProp>
+                            #if($datasource.databaseType=="oracle")
+                                #set($query="")
+                                #set($query=$query+"SELECT ")
+                                #foreach($domestic in $domestics)
+                                    #if($velocityCount>1)
+                                        #set($query=$query+",")
+                                    #end
+                                    #set($query=$query+$domestic.toUpperCase())
+                                #end
+                                #set($query=$query+" FROM (SELECT ")
+                                #foreach($domestic in $domestics)
+                                    #if($velocityCount>1)
+                                        #set($query=$query+",")
+                                    #end
+                                    #if($relationsContext.read("$.[?(@.domestic=='$domestic')]").size()>0)
+                                        ## if this field is a relation field, print only once from relation
+                                        #set($referenceId=$relationsContext.read("$.[?(@.domestic=='$domestic')]")[0].referenceIds.iterator().next())
+                                        #set($reference=$referenceGroupContext.read("$.[?(@.id=='$referenceId')]")[0])
+                                        #set($foreign=$reference.foreigns[$reference.domestics.indexOf($domestic)])
+                                        #set($query=$query+$String.format("t%d_.%s %s",$referenceId,$foreign.toUpperCase(),$domestic.toUpperCase()))
+                                    #else
+                                        ## otherwise print one from reference
+                                        #set($reference=$referenceGroupContext.read("$.[?(@.domestics contains '$domestic')]")[0])
+                                        #set($referenceId=$reference.id)
+                                        #set($foreign=$reference.foreigns[$reference.domestics.indexOf($domestic)])
+                                        #set($query=$query+$String.format("t%d_.%s %s",$referenceId,$foreign.toUpperCase(),$domestic.toUpperCase()))
+                                    #end
+                                #end
+                                #set($query=$query+" FROM ")
+                                #foreach($reference in $referenceGroup)
+                                    #if($velocityCount>1)
+                                        #set($query=$query+",")
+                                    #end
+                                    #set($foreignModule=$projectContext.read("$.modules[?(@.id=='$reference.foreignModule')]")[0])
+                                    #set($query=$query+$String.format("%s t%d_",$foreignModule.databaseTable,$reference.id))
+                                #end
+                                ## if this reference group comes from multi tables, that needs join
+                                #if(!$relations.isEmpty())
+                                    #set($query=$query+" WHERE ")
+                                    #set($first=true)
+                                    #foreach($relation in $relations)
+                                        #set($relationContext=$JsonPath.parse($relation))
+                                        #foreach($referenceId in $relation.referenceIds)
+                                            #foreach($referenceId2 in$relationContext.read("$.referenceIds[?(@>$referenceId)]"))
+                                                #if(!$first)
+                                                    #set($query=$query+" AND ")
+                                                #end
+                                                #set($reference=$referenceGroupContext.read("$.[?(@.id=='$referenceId')]")[0])
+                                                #set($foreign=$reference.foreigns[$reference.domestics.indexOf($relation.domestic)])
+                                                #set($reference2=$referenceGroupContext.read("$.[?(@.id=='$referenceId2')]")[0])
+                                                #set($foreign2=$reference2.foreigns[$reference2.domestics.indexOf($relation.domestic)])
+                                                #set($query=$query+$String.format("t%d_.%s=t%d_.%s",$referenceId,$foreign.toUpperCase(),$referenceId2,$foreign2.toUpperCase()))
+                                                #set($first=false)
+                                            #end
+                                        #end
+                                    #end
+                                #end
+                                #set($query=$query+" ORDER BY dbms_random.value) WHERE ROWNUM=1")
+                            #elseif($datasource.databaseType=="postgresql") ##TODO
+                                #set($query="")
+                                #set($query=$query+"SELECT ")
+                                #foreach($domestic in $domestics)
+                                    #if($velocityCount>1)
+                                        #set($query=$query+",")
+                                    #end
+                                    #if($relationsContext.read("$.[?(@.domestic=='$domestic')]").size()>0)
+                                        ## if this field is a relation field, print only once from relation
+                                        #set($referenceId=$relationsContext.read("$.[?(@.domestic=='$domestic')]")[0].referenceIds.iterator().next())
+                                        #set($reference=$referenceGroupContext.read("$.[?(@.id=='$referenceId')]")[0])
+                                        #set($foreign=$reference.foreigns[$reference.domestics.indexOf($domestic)])
+                                        #set($query=$query+$String.format("t%d_.%s %s",$referenceId,$foreign.toUpperCase(),$domestic.toUpperCase()))
+                                    #else
+                                        ## otherwise print one from reference
+                                        #set($reference=$referenceGroupContext.read("$.[?(@.domestics contains '$domestic')]")[0])
+                                        #set($referenceId=$reference.id)
+                                        #set($foreign=$reference.foreigns[$reference.domestics.indexOf($domestic)])
+                                        #set($query=$query+$String.format("t%d_.%s %s",$referenceId,$foreign.toUpperCase(),$domestic.toUpperCase()))
+                                    #end
+                                #end
+                                #set($query=$query+" FROM ")
+                                #foreach($reference in $referenceGroup)
+                                    #if($velocityCount>1)
+                                        #set($query=$query+",")
+                                    #end
+                                    #set($foreignModule=$projectContext.read("$.modules[?(@.id=='$reference.foreignModule')]")[0])
+                                    #set($query=$query+$String.format("%s t%d_",$foreignModule.databaseTable,$reference.id))
+                                #end
+                                ## if this reference group comes from multi tables, that needs join
+                                #if(!$relations.isEmpty())
+                                    #set($query=$query+" WHERE ")
+                                    #set($first=true)
+                                    #foreach($relation in $relations)
+                                        #set($relationContext=$JsonPath.parse($relation))
+                                        #foreach($referenceId in $relation.referenceIds)
+                                            #foreach($referenceId2 in$relationContext.read("$.referenceIds[?(@>$referenceId)]"))
+                                                #if(!$first)
+                                                    #set($query=$query+" AND ")
+                                                #end
+                                                #set($reference=$referenceGroupContext.read("$.[?(@.id=='$referenceId')]")[0])
+                                                #set($foreign=$reference.foreigns[$reference.domestics.indexOf($relation.domestic)])
+                                                #set($reference2=$referenceGroupContext.read("$.[?(@.id=='$referenceId2')]")[0])
+                                                #set($foreign2=$reference2.foreigns[$reference2.domestics.indexOf($relation.domestic)])
+                                                #set($query=$query+$String.format("t%d_.%s=t%d_.%s",$referenceId,$foreign.toUpperCase(),$referenceId2,$foreign2.toUpperCase()))
+                                                #set($first=false)
+                                            #end
+                                        #end
+                                    #end
+                                #end
+                                #set($query=$query+" ORDER BY random() limit 1")
+                            #end
+                            <stringProp name="query">$query</stringProp>
+                            <stringProp name="queryArguments"></stringProp>
+                            <stringProp name="queryArgumentsTypes"></stringProp>
+                            #set($variableNames="")
+                            #foreach($domestic in $domestics)
+                                #if($velocityCount>1)
+                                    #set($variableNames=$variableNames+",")
+                                #end
+                                #set($variableNames=$variableNames+$domestic)
+                            #end
+                            <stringProp name="variableNames">$variableNames</stringProp>
+                            <stringProp name="resultVariable"></stringProp>
+                            <stringProp name="queryTimeout"></stringProp>
+                            <stringProp name="resultSetHandler">Store as String</stringProp>
+                        </JDBCSampler>
+                        <hashTree/>
+                    #end
+                    ## output a paramter-element
+                    <UserParameters guiclass="UserParametersGui" testclass="UserParameters" testname="parameters" enabled="true">
+                        <collectionProp name="UserParameters.names">
+                            #foreach($physicalField in $moduleContext.read("$.fields[?(@.source=='table')]"))
+                                #foreach($value in $physicalField.values)
+                                    <stringProp name="">${physicalField.databaseColumn.toLowerCase()}_$value.code</stringProp>
+                                #end
+                                <stringProp name="">$physicalField.databaseColumn.toLowerCase()</stringProp>
+                            #end
+                        </collectionProp>
+                        <collectionProp name="UserParameters.thread_values">
+                            <collectionProp name="">
+                                #foreach($physicalField in $moduleContext.read("$.fields[?(@.source=='table')]"))
+                                    #if($moduleContext.read("$.references[?(@.domestics contains '$physicalField.databaseColumn')]").size()>0)
+                                        ## if this field is among the references
+                                        #set($integrated="$"+"{"+"$physicalField.databaseColumn.toLowerCase()"+"_1"+"}")
+                                        <stringProp name="">$integrated</stringProp>
+                                    #elseif($moduleContext.read("$.uniques[?(@.serial==true && @.items contains '$physicalField.databaseColumn')]").size()>0)
+                                        ## if this field is a serial unique
+                                        #if($datasource.databaseType=="oracle")
+                                            <stringProp name="">${module.databaseTable}_${physicalField.databaseColumn.toUpperCase()}.nextval</stringProp>
+                                        #elseif($datasource.databaseType=="postgresql")
+                                            <stringProp name="">nextval(${module.databaseTable}_$physicalField.databaseColumn.toUpperCase())</stringProp>
+                                        #end
+                                    #elseif($physicalField.javaType=="Integer")
+                                        #if($physicalField.values.size()>0)
+                                            #foreach($value in $physicalField.values)
+                                                <stringProp name="">$value.value</stringProp>
+                                            #end
+                                            ## output an integrated for this field
+                                            #set($integrated="")
+                                            #set($integrated=$integrated+"$"+"{"+"__RandomFromMultipleVars"+"(")
+                                            #foreach($value in $physicalField.values)
+                                                #if($velocityCount>1)
+                                                    #set($integrated=$integrated+"|")
+                                                #end
+                                                #set($integrated=$integrated+$physicalField.databaseColumn.toLowerCase()+"_"+$value.code)
+                                            #end
+                                            #set($integrated=$integrated+","+")"+"}")
+                                            <stringProp name="">$integrated</stringProp>
+                                        #else
+                                            #set($min=1-$Math.pow(10,$physicalField.integerLength))
+                                            #set($max=-1+$Math.pow(10,$physicalField.integerLength))
+                                            #set($integrated="$"+"{"+"__Random"+"("+$String.format("%.0f",$min)+","+$String.format("%.0f",$max)+","+")"+"}")
+                                            <stringProp name="">$integrated</stringProp>
+                                        #end
+                                    #elseif($physicalField.javaType=="Double")
+                                        #if($physicalField.values.size()>0)
+                                            #foreach($value in $physicalField.values)
+                                                <stringProp name="">$value.value</stringProp>
+                                            #end
+                                            ## output an integrated for this field
+                                            #set($integrated="")
+                                            #set($integrated=$integrated+"$"+"{"+"__RandomFromMultipleVars"+"(")
+                                            #foreach($value in $physicalField.values)
+                                                #if($velocityCount>1)
+                                                    #set($integrated=$integrated+"|")
+                                                #end
+                                                #set($integrated=$integrated+$physicalField.databaseColumn.toLowerCase()+"_"+$value.code)
+                                            #end
+                                            #set($integrated=$integrated+","+")"+"}")
+                                            <stringProp name="">$integrated</stringProp>
+                                        #else
+                                            #set($minInteger=1-$Math.pow(10,$physicalField.integerLength))
+                                            #set($maxInteger=-1+$Math.pow(10,$physicalField.integerLength))
+                                            #set($maxFraction=-1+$Math.pow(10,$physicalField.fractionLength))
+                                            #set($integrated="$"+"{"+"__Random"+"("+$String.format("%.0f",$minInteger)+","+$String.format("%.0f",$maxInteger)+","+")"+"}"+"."+"$"+"{"+"__Random"+"("+"0"+","+$String.format("%.0f",$maxFraction)+","+")"+"}")
+                                            <stringProp name="">$integrated</stringProp>
+                                        #end
+                                    #elseif($physicalField.javaType=="String")
+                                        #if($physicalField.values.size()>0)
+                                            #foreach($value in $physicalField.values)
+                                                <stringProp name="">$value.value</stringProp>
+                                            #end
+                                            ## output an integrated for this field
+                                            #set($integrated="")
+                                            #set($integrated=$integrated+"'"+"$"+"{"+"__RandomFromMultipleVars"+"(")
+                                            #foreach($value in $physicalField.values)
+                                                #if($velocityCount>1)
+                                                    #set($integrated=$integrated+"|")
+                                                #end
+                                                #set($integrated=$integrated+$physicalField.databaseColumn.toLowerCase()+"_"+$value.code)
+                                            #end
+                                            #set($integrated=$integrated+","+")"+"}"+"'")
+                                            <stringProp name="">$integrated</stringProp>
+                                        #else
+                                            #set($integrated="'"+"$"+"{"+"__RandomString"+"("+"$physicalField.stringLength"+","+"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"+","+")"+"}"+"'")
+                                            <stringProp name="">$integrated</stringProp>
+                                        #end
+                                    #elseif($physicalField.javaType=="java.util.Date")
+                                        #if($datasource.databaseType=="oracle")
+                                            <stringProp name="">sysdate+dbms_random.value(-800000,800000)+1/dbms_random.value(0,86400000)</stringProp>
+                                        #elseif($datasource.databaseType=="postgresql")
+                                            <stringProp name="">now() + (1600000*random()-800000 || ' day')::interval</stringProp>
+                                        #end
+                                    #end
+                                #end
+                            </collectionProp>
+                        </collectionProp>
+                        <boolProp name="UserParameters.per_iteration">false</boolProp>
+                    </UserParameters>
+                    <hashTree/>
+                    ##
+                    ## output a insert-element
+                    <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="insert" enabled="true">
+                        <stringProp name="dataSource">$module.datasource</stringProp>
+                        #set($query="")
+                        #set($query=$query+"INSERT INTO "+$module.databaseTable+" (")
+                        #foreach($physicalField in $moduleContext.read("$.fields[?(@.source=='table')]"))
+                            #if($velocityCount>1)
+                                #set($query=$query+",")
+                            #end
+                            #set($query=$query+$physicalField.databaseColumn.toUpperCase())
+                        #end
+                        #set($query=$query+") VALUES (")
+                        #foreach($physicalField in $moduleContext.read("$.fields[?(@.source=='table')]"))
+                            #if($velocityCount>1)
+                                #set($query=$query+",")
+                            #end
+                            #if($physicalField.notnull)
+                                #set($query=$query+"$"+"{"+$physicalField.databaseColumn.toLowerCase()+"}")
+                            #else
+                                #set($query=$query+"$"+"{"+"__RandomFromMultipleVars"+"("+"$physicalField.databaseColumn.toLowerCase()"+"|"+"null"+","+")"+"}")
+                            #end
+                        #end
+                        #set($query=$query+")")
+                        <stringProp name="query">$query</stringProp>
+                        <stringProp name="queryArguments"></stringProp>
+                        <stringProp name="queryArgumentsTypes"></stringProp>
+                        <stringProp name="queryTimeout"></stringProp>
+                        <stringProp name="queryType">Update Statement</stringProp>
+                        <stringProp name="resultSetHandler">Store as String</stringProp>
+                        <stringProp name="resultVariable"></stringProp>
+                        <stringProp name="variableNames"></stringProp>
+                    </JDBCSampler>
+                    <hashTree/>
+                </hashTree>
+            #end
+        </hashTree>
+    </hashTree>
+</jmeterTestPlan>

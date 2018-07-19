@@ -25,7 +25,7 @@ import java.util.Set;
 
 @Service("$StringUtils.uncapitalize($module.jteeServiceAlias)")
 public class $module.jteeServiceAlias {
-    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key==true)]")[0])
     ## get
     @Transactional(value="${module.datasource}_transaction",readOnly=true)
     public $module.jteeBeanAlias get (

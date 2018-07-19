@@ -5,7 +5,7 @@
 
 #set($module=$project.modules[$index])
 #set($datasource=$projectContext.read("$.envJtee.datasources[?(@.id=='$module.datasource')]")[0])
-#set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+#set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key==true)]")[0])
 /**
  * ID: ${module.id}
  * Description: ${module.description}
@@ -13,7 +13,7 @@
 #if($datasource.databaseType=="oracle")
     ##oracle
     ##sequences
-    #foreach($serialUnique in $projectContext.read("$.modules[$index].uniques[?(@.serial)]"))
+    #foreach($serialUnique in $projectContext.read("$.modules[$index].uniques[?(@.serial==true)]"))
         DROP SEQUENCE ${module.databaseTable}_$serialUnique.items[0].toUpperCase();
     #end
     ##table
@@ -22,7 +22,7 @@
     ##postgresql
     SET CLIENT_ENCODING = UTF8;
     ##sequences
-    #foreach($serialUnique in $projectContext.read("$.modules[$index].uniques[?(@.serial)]"))
+    #foreach($serialUnique in $projectContext.read("$.modules[$index].uniques[?(@.serial==true)]"))
         DROP SEQUENCE ${module.databaseTable}_$serialUnique.items[0].toUpperCase();
     #end
     ##table

@@ -68,9 +68,9 @@ public class $module.jteeBeanAlias {
         ## constraints
         #if($field.javaType=="Integer")
             public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
-            #set($min=0-$Math.pow(10,$field.integerLength))
+            #set($min=1-$Math.pow(10,$field.integerLength))
             public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MIN=$String.format("%.0f",$min);
-            #set($max=0+$Math.pow(10,$field.integerLength))
+            #set($max=-1+$Math.pow(10,$field.integerLength))
             public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MAX=$String.format("%.0f",$max);
         #elseif($field.javaType=="Double")
             public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
@@ -79,7 +79,7 @@ public class $module.jteeBeanAlias {
             public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_STRING=$field.stringLength;
         #end
         ## nullable annotation of getter
-        #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+        #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key=true)]")[0])
         #if($keyUnique.serial&&$keyUnique.items[0]==$field.databaseColumn)
             ## this field is the only field of the key, and the key is serial
             @javax.validation.constraints.Null(groups={Insert.class})

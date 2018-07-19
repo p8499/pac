@@ -5,7 +5,7 @@
 
 #set($module=$project.modules[$index])
 #set($datasource=$projectContext.read("$.envJtee.datasources[?(@.id=='$module.datasource')]")[0])
-#set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+#set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key==true)]")[0])
 /**
  * ID: ${module.id}
  * Description: ${module.description}
@@ -80,8 +80,8 @@
         );
     #end
     ##sequences
-    #foreach($serialUnique in $projectContext.read("$.modules[$index].uniques[?(@.serial)]"))
-        CREATE SEQUENCE ${module.databaseTable}_$serialUnique.items[0].toUpperCase() START WITH 1;
+    #foreach($serialUnique in $projectContext.read("$.modules[$index].uniques[?(@.serial==true)]"))
+        CREATE SEQUENCE ${module.databaseTable}_$serialUnique.items[0].toUpperCase() MINVALUE 0 START WITH 1;
     #end
 #elseif($datasource.databaseType=="postgresql")
     ##postgresql
@@ -154,7 +154,7 @@
         );
     #end
     ##sequences
-    #foreach($serialUnique in $projectContext.read("$.modules[$index].uniques[?(@.serial)]"))
-        CREATE SEQUENCE ${module.databaseTable}_$serialUnique.items[0].toUpperCase() START WITH 1;
+    #foreach($serialUnique in $projectContext.read("$.modules[$index].uniques[?(@.serial==true)]"))
+        CREATE SEQUENCE ${module.databaseTable}_$serialUnique.items[0].toUpperCase() MINVALUE 0 START WITH 1;
     #end
 #end

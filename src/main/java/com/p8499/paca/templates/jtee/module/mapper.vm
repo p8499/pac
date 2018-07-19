@@ -23,7 +23,7 @@ import ${project.envJtee.packageBean}.${module.jteeBeanAlias};
 @Component("$StringUtils.uncapitalize($module.jteeMapperAlias)")
 public interface $module.jteeMapperAlias {
     #set($datasource=$projectContext.read("$.envJtee.datasources[?(@.id=='$module.datasource')]")[0])
-    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key==true)]")[0])
     ## exists
     #set($value="")
     #set($value=$value+"SELECT COUNT(*)>0 FROM $module.databaseView WHERE")

@@ -26,7 +26,7 @@ import ${project.envJtee.packageMask}.${module.jteeMaskAlias};
 import ${project.envJtee.packageService}.${module.jteeServiceAlias};
 
 public abstract class $module.jteeControllerBaseAlias {
-    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key==true)]")[0])
     protected static final String path = "$module.jteeControllerPath";
     protected static final String attachmentPath = "$module.jteeControllerAttachmentPath";
     #set($value="")

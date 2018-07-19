@@ -37,6 +37,7 @@ public class Generator {
             _engine = new VelocityEngine();
             _engine.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
             _engine.setProperty("classpath." + RuntimeConstants.RESOURCE_LOADER + ".class", ClasspathResourceLoader.class.getName());
+            _engine.setProperty("directive.set.null.allowed", true);
             _engine.init();
         }
         return _engine;

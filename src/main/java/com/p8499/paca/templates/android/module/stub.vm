@@ -32,7 +32,7 @@ import $project.envAndroid.packageBean.$module.androidBeanAlias;
 import $project.envAndroid.packageMask.$module.androidMaskAlias;
 
 public class $module.androidStubAlias {
-    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key)]")[0])
+    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key==true)]")[0])
     ## path
     public static final String path = "$module.jteeControllerPath";
     public static final String attachPath = "${module.jteeControllerAttachmentPath}";
