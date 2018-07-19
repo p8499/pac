@@ -78,6 +78,13 @@
                                                             shortcut="UP"/>
                                     </accelerator>
                                 </MenuItem>
+                                <MenuItem mnemonicParsing="false" text="Test Scripts" onAction="#onTestClick">
+                                    <accelerator>
+                                        <KeyCodeCombination code="T"
+                                                            control="DOWN" alt="UP" meta="UP" shift="UP"
+                                                            shortcut="UP"/>
+                                    </accelerator>
+                                </MenuItem>
                             </items>
                         </Menu>
                     </items>

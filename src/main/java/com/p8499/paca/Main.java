@@ -18,13 +18,14 @@ public class Main {
                 .addOption("database", false, "generate database scripts")
                 .addOption("j2ee", false, "generate j2ee project")
                 .addOption("android", false, "generate android module")
+                .addOption("test", false, "generate test scripts")
                 .addOption("i", true, "input project file")
                 .addOption("o", true, "output folder");
         try {
             CommandLine commandLine = new DefaultParser().parse(options, args);
             if (commandLine.hasOption("i") && commandLine.hasOption("o")
-                    && (commandLine.hasOption("database") || commandLine.hasOption("j2ee") || commandLine.hasOption("android"))) {
-                //has i and o, and has at least one of database/j2ee/android
+                    && (commandLine.hasOption("database") || commandLine.hasOption("j2ee") || commandLine.hasOption("android") || commandLine.hasOption("test"))) {
+                //has i and o, and has at least one of database/j2ee/android/test
                 File inputFile = new File(commandLine.getOptionValue("i"));
                 File outputFolder = new File(commandLine.getOptionValue("o"));
                 FileInputStream fis = new FileInputStream(inputFile);
@@ -36,6 +37,8 @@ public class Main {
                     generateJtee(project, new File(outputFolder, "j2ee"));
                 if (commandLine.hasOption("android"))
                     generateAndroid(project, new File(outputFolder, "android"));
+                if (commandLine.hasOption("test"))
+                    generateAndroid(project, new File(outputFolder, "test"));
             } else
                 verbose();
         } catch (Exception e) {
@@ -44,7 +47,7 @@ public class Main {
     }
 
     public static void verbose() {
-        System.out.println("Usage: java-jar paca.jar -database -j2ee -android -i input_file -o output_folder");
+        System.out.println("Usage: java-jar paca.jar -database -j2ee -android -test -i input_file -o output_folder");
     }
 
     public static void generateDatabase(Map project, File outputDir) throws Exception {
@@ -144,5 +147,9 @@ public class Main {
             viewGenerator.writeTo(outputDir, i);
             listViewGenerator.writeTo(outputDir, i);
         }
+    }
+
+    public static void generateTest(Map project, File outputDir) throws Exception {
+        new com.p8499.paca.generator.test.ResetDataGenerator(project).writeTo(outputDir);
     }
 }

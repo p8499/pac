@@ -137,6 +137,10 @@ public class ApplicationController implements Initializable, EnvironmentContaine
         generateAndroid(getOutputFolder());
     }
 
+    public void onTestClick() throws Exception {
+        generateTest(getOutputFolder());
+    }
+
     private File getInputSourceFile() {
         //return a source file to read
         FileChooser fileChooser = new FileChooser();
@@ -225,6 +229,15 @@ public class ApplicationController implements Initializable, EnvironmentContaine
             com.p8499.paca.Main.generateAndroid(
                     (Map) Configuration.defaultConfiguration().jsonProvider().parse(new ObjectMapper().writeValueAsString(project)),
                     new File(folder, String.format("gen")));
+        }
+    }
+
+    private void generateTest(File folder) throws Exception {
+        if (folder != null) {
+            Project project = (Project) mStage.getUserData();
+            com.p8499.paca.Main.generateTest(
+                    (Map) Configuration.defaultConfiguration().jsonProvider().parse(new ObjectMapper().writeValueAsString(project)),
+                    new File(folder, String.format("test")));
         }
     }
 
