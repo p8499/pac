@@ -59,6 +59,7 @@
                 ## reversed for each modules
                 #set($moduleContext=$JsonPath.parse($module))
                 #set($serialUniques=$moduleContext.read("$.uniques[?(@.serial==true)]"))
+                #set($datasource=$projectContext.read("$.envJtee.datasources[?(@.id=='$module.datasource')]")[0])
                 <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="clear $module.id.toLowerCase()" enabled="true">
                     #set($comments="")
                     #set($comments=$comments+"Delete all rows of $module.databaseTable")
@@ -97,7 +98,13 @@
                         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="fetch sequence $serialUnique.items[0]" enabled="true">
                             <stringProp name="dataSource">$module.datasource</stringProp>
                             <stringProp name="queryType">Select Statement</stringProp>
-                            <stringProp name="query">SELECT  ${module.databaseTable}_${serialUnique.items[0].toUpperCase()}.nextval FROM dual</stringProp>
+                            #set($query="")
+                            #if($datasource.databaseType=="oracle")
+                                #set($query=$String.format("SELECT %s_%s.nextval FROM dual",$module.databaseTable,$serialUnique.items[0].toUpperCase()))
+                            #elseif($datasource.databaseType=="postgresql")
+                                #set($query=$String.format("SELECT nextval('%s_%s')",$module.databaseTable,$serialUnique.items[0].toUpperCase()))
+                            #end
+                            <stringProp name="query">$query</stringProp>
                             <stringProp name="queryArguments"></stringProp>
                             <stringProp name="queryArgumentsTypes"></stringProp>
                             <stringProp name="variableNames">${serialUnique.items[0]}_val</stringProp>
@@ -122,7 +129,13 @@
                         <JDBCSampler guiclass="TestBeanGUI" testclass="JDBCSampler" testname="fetch sequence $serialUnique.items[0]" enabled="true">
                             <stringProp name="dataSource">$module.datasource</stringProp>
                             <stringProp name="queryType">Select Statement</stringProp>
-                            <stringProp name="query">SELECT ${module.databaseTable}_${serialUnique.items[0].toUpperCase()}.nextval FROM dual</stringProp>
+                            #set($query="")
+                            #if($datasource.databaseType=="oracle")
+                                #set($query=$String.format("SELECT %s_%s.nextval FROM dual",$module.databaseTable,$serialUnique.items[0].toUpperCase()))
+                            #elseif($datasource.databaseType=="postgresql")
+                                #set($query=$String.format("SELECT nextval('%s_%s')",$module.databaseTable,$serialUnique.items[0].toUpperCase()))
+                            #end
+                            <stringProp name="query">$query</stringProp>
                             <stringProp name="queryArguments"></stringProp>
                             <stringProp name="queryArgumentsTypes"></stringProp>
                             <stringProp name="variableNames"></stringProp>
@@ -343,7 +356,7 @@
                                     #end
                                 #end
                                 #set($query=$query+" ORDER BY dbms_random.value) WHERE ROWNUM=1")
-                            #elseif($datasource.databaseType=="postgresql") ##TODO
+                            #elseif($datasource.databaseType=="postgresql")
                                 #set($query="")
                                 #set($query=$query+"SELECT ")
                                 #foreach($domestic in $domestics)
@@ -434,7 +447,7 @@
                                         #if($datasource.databaseType=="oracle")
                                             <stringProp name="">${module.databaseTable}_${physicalField.databaseColumn.toUpperCase()}.nextval</stringProp>
                                         #elseif($datasource.databaseType=="postgresql")
-                                            <stringProp name="">nextval(${module.databaseTable}_$physicalField.databaseColumn.toUpperCase())</stringProp>
+                                            <stringProp name="">nextval('${module.databaseTable}_$physicalField.databaseColumn.toUpperCase()')</stringProp>
                                         #end
                                     #elseif($physicalField.javaType=="Integer")
                                         #if($physicalField.values.size()>0)

@@ -184,7 +184,7 @@ public interface $module.jteeMapperAlias {
         #if($keyUnique.serial)
             ## this table is in postgresql database and its key is serial
             #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyUnique.items[0]')]")[0]) ## in this case, there should be only one keyField
-            @org.apache.ibatis.annotations.SelectKey(statement = "SELECT nextval(${module.databaseTable}_$keyField.databaseColumn.toUpperCase()) AS ${keyField.databaseColumn} FROM DUAL",before = true,resultType = ${keyField.javaType}.class,keyColumn = "${keyField.databaseColumn}",keyProperty = "bean.${keyField.databaseColumn}")
+            @org.apache.ibatis.annotations.SelectKey(statement = "SELECT nextval('${module.databaseTable}_$keyField.databaseColumn.toUpperCase()') AS ${keyField.databaseColumn} FROM DUAL",before = true,resultType = ${keyField.javaType}.class,keyColumn = "${keyField.databaseColumn}",keyProperty = "bean.${keyField.databaseColumn}")
             #set($value="")
             #set($value=$value+"INSERT INTO $module.databaseTable (")
             #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))

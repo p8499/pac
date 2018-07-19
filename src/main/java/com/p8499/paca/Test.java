@@ -33,7 +33,7 @@ public class Test {
         test2();
         //we have the project
         VelocityContext ctx = new VelocityContext();
-        Object project = Configuration.defaultConfiguration().jsonProvider().parse(new FileInputStream(new File("C:\\Users\\jdeuser\\Desktop\\ss\\Sales.json")), "UTF-8");
+        Object project = Configuration.defaultConfiguration().jsonProvider().parse(new FileInputStream(new File("C:\\Users\\jdeuser\\Desktop\\ss\\Sales_p.json")), "UTF-8");
         ctx.put("Class", Class.class);
         ctx.put("Integer", Integer.class);
         ctx.put("String", String.class);
