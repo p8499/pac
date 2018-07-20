@@ -60,17 +60,19 @@ public class $module.androidBeanAlias implements Parcelable {
         #end
         ;
         ## constraints
-        #if($field.javaType=="Integer")
-            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
-            #set($min=0-$Math.pow(10,$field.integerLength))
-            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MIN=$String.format("%.0f",$min);
-            #set($max=0+$Math.pow(10,$field.integerLength))
-            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MAX=$String.format("%.0f",$max);
-        #elseif($field.javaType=="Double")
-            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
-            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_FRACTION=$field.fractionLength;
-        #elseif($field.javaType=="String")
-            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_STRING=$field.stringLength;
+        #if($field.source=="table")
+            #if($field.javaType=="Integer")
+                public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
+                #set($min=1-$Math.pow(10,$field.integerLength))
+                public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MIN=$String.format("%.0f",$min);
+                #set($max=-1+$Math.pow(10,$field.integerLength))
+                public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MAX=$String.format("%.0f",$max);
+            #elseif($field.javaType=="Double")
+                public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
+                public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_FRACTION=$field.fractionLength;
+            #elseif($field.javaType=="String")
+                public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_STRING=$field.stringLength;
+            #end
         #end
         ## getter
         public $field.javaType get$StringUtils.capitalize($field.databaseColumn) () {

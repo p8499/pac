@@ -33,7 +33,7 @@ public class Test {
         test2();
         //we have the project
         VelocityContext ctx = new VelocityContext();
-        Object project = Configuration.defaultConfiguration().jsonProvider().parse(new FileInputStream(new File("C:\\Users\\jdeuser\\Desktop\\ss\\Sales_p.json")), "UTF-8");
+        Object project = Configuration.defaultConfiguration().jsonProvider().parse(new FileInputStream(new File("C:\\Users\\jdeuser\\Desktop\\Sales.json")), "UTF-8");
         ctx.put("Class", Class.class);
         ctx.put("Integer", Integer.class);
         ctx.put("String", String.class);
@@ -60,14 +60,14 @@ public class Test {
         ve.init();
 
         //we get the template and parse the project
-        Template t = ve.getTemplate("com/p8499/paca/templates/test/reset_data.vm");
+        Template t = ve.getTemplate("com/p8499/paca/templates/jtee/module/bean.vm");
         StringWriter sw = new StringWriter();
         t.merge(ctx, sw);
 //        System.out.println(sw.toString());
-//        System.out.println(new Formatter().formatSource(sw.toString()));
-        StringBuilder sb = new StringBuilder();
-        Generator.getPrettyPrinter().process(sw.toString(), sb);
-        System.out.print(sb.toString());
+        System.out.println(new Formatter().formatSource(sw.toString()));
+//        StringBuilder sb = new StringBuilder();
+//        Generator.getPrettyPrinter().process(sw.toString(), sb);
+//        System.out.print(sb.toString());
 
 //        TGSqlParser tgSqlParser = new TGSqlParser(EDbVendor.dbvoracle);
 //        tgSqlParser.sqltext = sw.toString();

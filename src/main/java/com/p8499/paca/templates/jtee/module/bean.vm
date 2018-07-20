@@ -66,20 +66,22 @@ public class $module.jteeBeanAlias {
         #end
         ;
         ## constraints
-        #if($field.javaType=="Integer")
-            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
-            #set($min=1-$Math.pow(10,$field.integerLength))
-            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MIN=$String.format("%.0f",$min);
-            #set($max=-1+$Math.pow(10,$field.integerLength))
-            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MAX=$String.format("%.0f",$max);
-        #elseif($field.javaType=="Double")
-            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
-            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_FRACTION=$field.fractionLength;
-        #elseif($field.javaType=="String")
-            public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_STRING=$field.stringLength;
+        #if($field.source=="table")
+            #if($field.javaType=="Integer")
+                public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
+                #set($min=1-$Math.pow(10,$field.integerLength))
+                public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MIN=$String.format("%.0f",$min);
+                #set($max=-1+$Math.pow(10,$field.integerLength))
+                public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_MAX=$String.format("%.0f",$max);
+            #elseif($field.javaType=="Double")
+                public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_INTEGER=$field.integerLength;
+                public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_FRACTION=$field.fractionLength;
+            #elseif($field.javaType=="String")
+                public static final int CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_STRING=$field.stringLength;
+            #end
         #end
         ## nullable annotation of getter
-        #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key=true)]")[0])
+        #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key==true)]")[0])
         #if($keyUnique.serial&&$keyUnique.items[0]==$field.databaseColumn)
             ## this field is the only field of the key, and the key is serial
             @javax.validation.constraints.Null(groups={Insert.class})
@@ -97,15 +99,17 @@ public class $module.jteeBeanAlias {
             @javax.validation.constraints.Null(groups={Insert.class,Update.class})
         #end
         ## constraint annotation of getter
-        #if(!($keyUnique.serial&&$keyUnique.items.contains($field.databaseColumn)))
-            ## if not (this field is the only key and the key is serial)
-            #if($field.javaType=="Integer")
-                @javax.validation.constraints.Min(value=CONSTRAINT_$field.databaseColumn.toUpperCase()_MIN)
-                @javax.validation.constraints.Max(value=CONSTRAINT_$field.databaseColumn.toUpperCase()_MAX)
-            #elseif($field.javaType=="Double")
-                @javax.validation.constraints.Digits(integer=CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_FRACTION,fraction=CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_FRACTION)
-            #elseif($field.javaType=="String")
-                @javax.validation.constraints.Size(max=CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_STRING)
+        #if($field.source=="table")
+            #if(!($keyUnique.serial&&$keyUnique.items.contains($field.databaseColumn)))
+                ## if not (this field is the only key and the key is serial)
+                #if($field.javaType=="Integer")
+                    @javax.validation.constraints.Min(value=CONSTRAINT_$field.databaseColumn.toUpperCase()_MIN)
+                    @javax.validation.constraints.Max(value=CONSTRAINT_$field.databaseColumn.toUpperCase()_MAX)
+                #elseif($field.javaType=="Double")
+                    @javax.validation.constraints.Digits(integer=CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_FRACTION,fraction=CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_FRACTION)
+                #elseif($field.javaType=="String")
+                    @javax.validation.constraints.Size(max=CONSTRAINT_$field.databaseColumn.toUpperCase()_LENGTH_STRING)
+                #end
             #end
         #end
         ## getter
