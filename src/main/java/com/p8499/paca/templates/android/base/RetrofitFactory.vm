@@ -5,6 +5,7 @@ package $project.envAndroid.packageBase;
 
 import android.content.Context;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -18,9 +19,10 @@ public class RetrofitFactory {
 
     public static OkHttpClient getOkHttpClient(Context context) {
         if (okHttpClient == null) {
-            HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
-            logging.setLevel(HttpLoggingInterceptor.Level.BODY);
-            okHttpClient = new OkHttpClient.Builder().cookieJar(new CookieManager(context)).addInterceptor(logging).build();
+            HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
+            loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            Interceptor connectionInterceptor = chain -> chain.proceed(chain.request().newBuilder().addHeader("Connection", "close").build());
+            okHttpClient = new OkHttpClient.Builder().cookieJar(new CookieManager(context)).addInterceptor(loggingInterceptor).addInterceptor(connectionInterceptor).build();
         }
         return okHttpClient;
     }
