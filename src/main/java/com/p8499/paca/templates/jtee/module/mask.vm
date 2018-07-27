@@ -1,7 +1,10 @@
 ## Context:
 ##   Class StringUtils
+##   Class JsonPath
 ##   LinkedHashMap project
 ##   Integer index
+#set($projectContext=$JsonPath.parse($project))
+
 #set($module=$project.modules[$index])
 package $project.envJtee.packageMask;
 
@@ -69,7 +72,7 @@ public class $module.jteeMaskAlias implements Mask<$module.jteeMaskAlias>{
 
     ## attributes
     @Override
-    public $module.jteeMaskAlias keys(boolean b) {
+    public $module.jteeMaskAlias attributes(boolean b) {
         #foreach($attributeField in $projectContext.read("$.modules[$index].fields[?(@.databaseColumn nin $keyUnique.items && @.source=='table')]"))
             this.$attributeField.databaseColumn=b;
         #end
@@ -78,7 +81,7 @@ public class $module.jteeMaskAlias implements Mask<$module.jteeMaskAlias>{
 
     ## physicals
     @Override
-    public $module.jteeMaskAlias keys(boolean b) {
+    public $module.jteeMaskAlias physicals(boolean b) {
         #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
             this.$physicalField.databaseColumn=b;
         #end
@@ -87,7 +90,7 @@ public class $module.jteeMaskAlias implements Mask<$module.jteeMaskAlias>{
 
     ## virtuals
     @Override
-    public $module.jteeMaskAlias keys(boolean b) {
+    public $module.jteeMaskAlias virtuals(boolean b) {
         #foreach($virtualField in $projectContext.read("$.modules[$index].fields[?(@.source=='view')]"))
             this.$virtualField.databaseColumn=b;
         #end
