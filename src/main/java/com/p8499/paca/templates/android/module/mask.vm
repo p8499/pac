@@ -10,10 +10,12 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import ${project.envAndroid.packageBase}.Mask;
 
 @JsonSerialize(using=${module.androidMaskAlias}.Serializer.class)
-public class $module.androidMaskAlias {
-## for each field
+public class $module.androidMaskAlias implements Mask<$module.androidMaskAlias>{
+    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key==true)]")[0])
+    ## for each field
     #foreach($field in $module.fields)
         ## fields initial value
         protected boolean $field.databaseColumn=false;
@@ -47,6 +49,7 @@ public class $module.androidMaskAlias {
     }
 
     ## all
+    @Override
     public $module.androidMaskAlias all(boolean b) {
         #foreach($field in $module.fields)
             this.$field.databaseColumn=b;
@@ -54,7 +57,44 @@ public class $module.androidMaskAlias {
         return this;
     }
 
+    ## keys
+    @Override
+    public $module.androidMaskAlias keys(boolean b) {
+        #foreach($keyField in $projectContext.read("$.modules[$index].fields[?(@.databaseColumn in $keyUnique.items)]"))
+            this.$keyField.databaseColumn=b;
+        #end
+        return this;
+    }
+
+    ## attributes
+    @Override
+    public $module.androidMaskAlias keys(boolean b) {
+        #foreach($attributeField in $projectContext.read("$.modules[$index].fields[?(@.databaseColumn nin $keyUnique.items && @.source=='table')]"))
+            this.$attributeField.databaseColumn=b;
+        #end
+        return this;
+    }
+
+    ## physicals
+    @Override
+    public $module.androidMaskAlias keys(boolean b) {
+        #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
+            this.$physicalField.databaseColumn=b;
+        #end
+        return this;
+    }
+
+    ## virtuals
+    @Override
+    public $module.androidMaskAlias keys(boolean b) {
+        #foreach($virtualField in $projectContext.read("$.modules[$index].fields[?(@.source=='view')]"))
+            this.$virtualField.databaseColumn=b;
+        #end
+        return this;
+    }
+
     ## getter by field name
+    @Override
     public boolean get(String p) {
         #foreach($field in $module.fields)
             #if($velocityCount>1)
@@ -67,6 +107,7 @@ public class $module.androidMaskAlias {
     }
 
     ## setter by field name
+    @Override
     public $module.androidMaskAlias set(String p, boolean b) {
         #foreach($field in $module.fields)
             #if($velocityCount>1)

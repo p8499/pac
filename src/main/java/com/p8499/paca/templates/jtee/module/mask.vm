@@ -11,9 +11,11 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import ${project.envJtee.packageBase}.Mask;
 
 @JsonSerialize(using=${module.jteeMaskAlias}.Serializer.class)
-public class $module.jteeMaskAlias{
+public class $module.jteeMaskAlias implements Mask<$module.jteeMaskAlias>{
+    #set($keyUnique=$projectContext.read("$.modules[$index].uniques[?(@.key==true)]")[0])
     ## for each field
     #foreach($field in $module.fields)
         ## fields initial value
@@ -48,6 +50,7 @@ public class $module.jteeMaskAlias{
     }
 
     ## all
+    @Override
     public $module.jteeMaskAlias all(boolean b) {
         #foreach($field in $module.fields)
             this.$field.databaseColumn=b;
@@ -55,7 +58,44 @@ public class $module.jteeMaskAlias{
         return this;
     }
 
+    ## keys
+    @Override
+    public $module.jteeMaskAlias keys(boolean b) {
+        #foreach($keyField in $projectContext.read("$.modules[$index].fields[?(@.databaseColumn in $keyUnique.items)]"))
+            this.$keyField.databaseColumn=b;
+        #end
+        return this;
+    }
+
+    ## attributes
+    @Override
+    public $module.jteeMaskAlias keys(boolean b) {
+        #foreach($attributeField in $projectContext.read("$.modules[$index].fields[?(@.databaseColumn nin $keyUnique.items && @.source=='table')]"))
+            this.$attributeField.databaseColumn=b;
+        #end
+        return this;
+    }
+
+    ## physicals
+    @Override
+    public $module.jteeMaskAlias keys(boolean b) {
+        #foreach($physicalField in $projectContext.read("$.modules[$index].fields[?(@.source=='table')]"))
+            this.$physicalField.databaseColumn=b;
+        #end
+        return this;
+    }
+
+    ## virtuals
+    @Override
+    public $module.jteeMaskAlias keys(boolean b) {
+        #foreach($virtualField in $projectContext.read("$.modules[$index].fields[?(@.source=='view')]"))
+            this.$virtualField.databaseColumn=b;
+        #end
+        return this;
+    }
+
     ## getter by field name
+    @Override
     public boolean get(String p) {
         #foreach($field in $module.fields)
             #if($velocityCount>1)
@@ -68,6 +108,7 @@ public class $module.jteeMaskAlias{
     }
 
     ## setter by field name
+    @Override
     public $module.jteeMaskAlias set(String p, boolean b) {
         #foreach($field in $module.fields)
             #if($velocityCount>1)

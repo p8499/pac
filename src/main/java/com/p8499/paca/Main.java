@@ -99,6 +99,7 @@ public class Main {
         new com.p8499.paca.generator.jtee.base.OrderByListExprGenerator(project).writeTo(outputDir);
         new com.p8499.paca.generator.jtee.base.RangeExprGenerator(project).writeTo(outputDir);
         new com.p8499.paca.generator.jtee.base.RangeListExprGenerator(project).writeTo(outputDir);
+        new com.p8499.paca.generator.jtee.base.MaskGenerator(project).writeTo(outputDir);
         com.p8499.paca.generator.jtee.module.BeanGenerator beanGenerator = new com.p8499.paca.generator.jtee.module.BeanGenerator(project);
         com.p8499.paca.generator.jtee.module.MaskGenerator maskGenerator = new com.p8499.paca.generator.jtee.module.MaskGenerator(project);
         com.p8499.paca.generator.jtee.module.MapperGenerator mapperGenerator = new com.p8499.paca.generator.jtee.module.MapperGenerator(project);
@@ -134,6 +135,7 @@ public class Main {
         new com.p8499.paca.generator.android.base.CookieManagerGenerator(project).writeTo(outputDir);
         new com.p8499.paca.generator.android.base.SerializableCookieGenerator(project).writeTo(outputDir);
         new com.p8499.paca.generator.android.base.PersistentCookieStoreGenerator(project).writeTo(outputDir);
+        new com.p8499.paca.generator.android.base.MaskGenerator(project).writeTo(outputDir);
         com.p8499.paca.generator.android.module.BeanGenerator beanGenerator = new com.p8499.paca.generator.android.module.BeanGenerator(project);
         com.p8499.paca.generator.android.module.MaskGenerator maskGenerator = new com.p8499.paca.generator.android.module.MaskGenerator(project);
         com.p8499.paca.generator.android.module.StubGenerator stubGenerator = new com.p8499.paca.generator.android.module.StubGenerator(project);
