@@ -347,7 +347,7 @@ public class $module.androidStubAlias {
         Flowable<Response<ResponseBody>> downloadAttachment (
             #foreach($keyItem in $keyUnique.items)
                 #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
-                $keyField.javaType $keyField.databaseColumn,
+                @Path("$keyField.databaseColumn") $keyField.javaType $keyField.databaseColumn,
             #end
             @Query("name") String name,
             @Header("Accept") String accept
@@ -357,7 +357,7 @@ public class $module.androidStubAlias {
         Flowable<Response<Void>> uploadAttachment (
             #foreach($keyItem in $keyUnique.items)
                 #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
-                $keyField.javaType $keyField.databaseColumn,
+                @Path("$keyField.databaseColumn") $keyField.javaType $keyField.databaseColumn,
             #end
             @Query("name") String name,
             @Body RequestBody body
@@ -367,7 +367,7 @@ public class $module.androidStubAlias {
         Flowable<Response<Void>> deleteAttachment (
             #foreach($keyItem in $keyUnique.items)
                 #set($keyField=$projectContext.read("$.modules[$index].fields[?(@.databaseColumn=='$keyItem')]")[0])
-                $keyField.javaType $keyField.databaseColumn,
+                @Path("$keyField.databaseColumn") $keyField.javaType $keyField.databaseColumn,
             #end
             @Query("name") String name
         );
