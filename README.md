@@ -371,3 +371,5 @@ public class RecordController extends RecordControllerBase {
 | Response |  |
 | Response Code | 403 |
 
+See also
+Android Client: https://github.com/p8499/Sales
