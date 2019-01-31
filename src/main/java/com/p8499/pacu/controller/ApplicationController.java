@@ -237,7 +237,7 @@ public class ApplicationController implements Initializable, EnvironmentContaine
             Project project = (Project) mStage.getUserData();
             com.p8499.paca.Main.generateTest(
                     (Map) Configuration.defaultConfiguration().jsonProvider().parse(new ObjectMapper().writeValueAsString(project)),
-                    new File(folder, String.format("test")));
+                    new File(folder, String.format("%s_test", project.mName.get())));
         }
     }
 

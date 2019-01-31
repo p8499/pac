@@ -440,7 +440,11 @@
                                 #foreach($physicalField in $moduleContext.read("$.fields[?(@.source=='table')]"))
                                     #if($moduleContext.read("$.references[?(@.domestics contains '$physicalField.databaseColumn')]").size()>0)
                                         ## if this field is among the references
-                                        #set($integrated="$"+"{"+"$physicalField.databaseColumn.toLowerCase()"+"_1"+"}")
+                                        #if($physicalField.javaType=="String")
+                                            #set($integrated="'"+"$"+"{"+"$physicalField.databaseColumn.toLowerCase()"+"_1"+"}"+"'")
+                                        #else
+                                            #set($integrated="$"+"{"+"$physicalField.databaseColumn.toLowerCase()"+"_1"+"}")
+                                        #end
                                         <stringProp name="">$integrated</stringProp>
                                     #elseif($moduleContext.read("$.uniques[?(@.serial==true && @.items contains '$physicalField.databaseColumn')]").size()>0)
                                         ## if this field is a serial unique
